@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".EnterURLActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/label_txt"
+        android:id="@+id/label"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/showFeed_btn" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/url_txt"
+        android:text="http://www.theregister.co.uk/software/os/headlines.atom"
+        android:layout_below="@+id/label"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_txt"
+        android:id="@+id/showFeed_btn"
+        android:onClick="showFeed"
+        android:layout_below="@+id/url_txt"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>
