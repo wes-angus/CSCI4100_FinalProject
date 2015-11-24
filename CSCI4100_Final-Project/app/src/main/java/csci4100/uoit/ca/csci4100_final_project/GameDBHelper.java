@@ -83,23 +83,6 @@ public class GameDBHelper extends SQLiteOpenHelper
 
         return games;
     }
-
-    //Delete a game from the database
-    public boolean deleteGame(long gameId)
-    {
-        //Get a connection to the database
-        SQLiteDatabase database = this.getWritableDatabase();
-
-        //Delete the game with the given gameId from the database
-        int numRowsAffected = database.delete(TABLE_NAME, "gameId = ?",
-                new String[] { "" + gameId });
-
-        Log.i("DatabaseAccess", "deleteContact(" + gameId + "):  numRowsAffected: "
-                + numRowsAffected);
-
-        //Check if the game was deleted successfully
-        return (numRowsAffected == 1);
-    }
     
     public boolean updateGame(Game game)
     {
@@ -112,7 +95,8 @@ public class GameDBHelper extends SQLiteOpenHelper
         values.put("releaseDate", game.getReleaseDate());
         values.put("description", game.getDescription());
         values.put("link", game.getLink());
-        int numRowsAffected = database.update(TABLE_NAME, values, "title = ?", new String[] { "" + game.getTitle() });
+        int numRowsAffected = database.update(TABLE_NAME, values, "title = ?", new String[] { ""
+                + game.getTitle() });
 
         Log.i("DatabaseAccess", "updateGame(" + game + "):  numRowsAffected: " + numRowsAffected);
 

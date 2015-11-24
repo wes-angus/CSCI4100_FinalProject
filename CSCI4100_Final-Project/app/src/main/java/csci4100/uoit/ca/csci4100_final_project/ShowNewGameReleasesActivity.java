@@ -14,7 +14,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
-public class ShowNewGameReleasesActivity extends Activity implements GameDataListener {
+public class ShowNewGameReleasesActivity extends Activity implements GameDataListener, DatabaseListener {
 
     String url;
 
@@ -72,5 +72,11 @@ public class ShowNewGameReleasesActivity extends Activity implements GameDataLis
     private void populateList(ListView listView, List<Game> data)
     {
         listView.setAdapter(new GameAdapter(this, data));
+    }
+
+    @Override
+    public void syncGames(List<Game> games, boolean addedItems)
+    {
+
     }
 }
