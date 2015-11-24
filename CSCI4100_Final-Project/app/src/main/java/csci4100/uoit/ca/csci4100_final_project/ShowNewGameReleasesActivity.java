@@ -3,9 +3,13 @@
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.List;
@@ -48,10 +52,21 @@ public class ShowNewGameReleasesActivity extends Activity implements GameDataLis
     }
 
     @Override
-    public void showStories(List<Game> data)
+    public void showStories(final List<Game> data)
     {
         ListView listView = (ListView)findViewById(R.id.game_listView);
         populateList(listView, data);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3)
+            {
+                String url = data.get(position).getLink();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });
     }
 
     private void populateList(ListView listView, List<Game> data)
