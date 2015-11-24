@@ -8,6 +8,10 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+TODO: Add check that only adds a game if it does not already exist, to avoid
+TODO: overwriting the "willBuy" property when adding the same game twice.
+*/
 public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 {
     private DatabaseListener listener = null;

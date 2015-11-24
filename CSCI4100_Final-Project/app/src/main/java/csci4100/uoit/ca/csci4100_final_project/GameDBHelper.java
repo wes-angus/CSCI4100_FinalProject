@@ -20,7 +20,7 @@ public class GameDBHelper extends SQLiteOpenHelper
 
     public static final String CREATE_STMT = "CREATE TABLE " + TABLE_NAME + "(" +
             " title text primary key, releaseDate text not null," +
-            " description text, link text not null)";
+            " description text, link text not null, willBuy integer not null)";
     public static final String DROP_STMT = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
     public GameDBHelper(Context context)
@@ -53,7 +53,10 @@ public class GameDBHelper extends SQLiteOpenHelper
         values.put("releaseDate", game.getReleaseDate());
         values.put("description", game.getDescription());
         values.put("link", game.getLink());
+        values.put("willBuy", game.isWillBuy());
         long gameId = database.insert(TABLE_NAME, null, values);
+
+        Log.i("DatabaseAccess", "addGame(" + game.getTitle() + ")");
     }
 
     //Query all games in the database
@@ -74,7 +77,9 @@ public class GameDBHelper extends SQLiteOpenHelper
             String releaseDate = cursor.getString(1);
             String description = cursor.getString(2);
             String link = cursor.getString(3);
+            boolean willBuy = (cursor.getInt(4) != 0);
             Game game = new Game(title, releaseDate, description, link);
+            game.setWillBuy(willBuy);
             games.add(game);
             cursor.moveToNext();
         }
@@ -95,10 +100,13 @@ public class GameDBHelper extends SQLiteOpenHelper
         values.put("releaseDate", game.getReleaseDate());
         values.put("description", game.getDescription());
         values.put("link", game.getLink());
-        int numRowsAffected = database.update(TABLE_NAME, values, "title = ?", new String[]{""
-                + game.getTitle() });
+        values.put("willBuy", game.isWillBuy());
 
-        Log.i("DatabaseAccess", "updateGame(" + game + "):  numRowsAffected: " + numRowsAffected);
+        String whereClause = "title = ?";
+        String[] whereArgs = new String[]{ game.getTitle() };
+        int numRowsAffected = database.update(TABLE_NAME, values, whereClause, whereArgs);
+
+        Log.i("DatabaseAccess", "updateGame(" + game.getTitle() + "):  numRowsAffected: " + numRowsAffected);
 
         // verify that the game was updated successfully
         return (numRowsAffected == 1);

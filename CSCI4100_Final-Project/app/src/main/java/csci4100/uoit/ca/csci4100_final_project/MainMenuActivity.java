@@ -15,9 +15,10 @@ import android.widget.ListView;
 
 import java.util.List;
 
+//TODO: Add "About" button to display more information about the app in a separate activity
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
-    private static final String url = "http://www.giantbomb.com/feeds/new_releases/";
+    private static final String url = "http://www.gamespot.com/feeds/new-games/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

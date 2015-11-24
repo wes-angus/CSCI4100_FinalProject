@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
+//TODO: Add Save/Cancel buttons to layout and implement database updating
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener,
         GameDataListener
 {
@@ -79,7 +80,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         }
     }
 
-    private void populateList(ListView listView, List<Game> data)
+    public void populateList(ListView listView, List<Game> data)
     {
         listView.setAdapter(new GameAdapter(this, data));
     }
