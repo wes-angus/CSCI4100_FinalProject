@@ -12,7 +12,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 {
     private DatabaseListener listener = null;
     private GameDBHelper dbHelper = null;
-    boolean addingItems = false;
+    short option = -1;
 
     public LoadDatabaseInfoTask(DatabaseListener listener, Context context)
     {
@@ -25,17 +25,26 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
     {
         /*
         This variable determines which database function to use
-        0 = Add multiple games and get the list of games, 1 = get the list of games only
+        0 = Add multiple games and get the list of games, 1 = get the list of games only,
+        2 = Update all of the games and get the updated list
         */
-        addingItems = (boolean) params[0];
+        option = (short) params[0];
         List<Game> games = (List<Game>) params[1];
 
-        if(addingItems)
+        switch (option)
         {
-            for (Game game : games)
-            {
-                addGame(game);
-            }
+            case 0:
+                for (Game game : games)
+                {
+                    addGame(game);
+                }
+                break;
+            case 2:
+                for (Game game : games)
+                {
+                    updateGame(game);
+                }
+                break;
         }
         games = getGames();
 
@@ -44,7 +53,12 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 
     private void addGame(Game game)
     {
-        dbHelper.addGame(game.getTitle(), game.getReleaseDate(), game.getDescription(), game.getLink());
+        dbHelper.addGame(game);
+    }
+
+    private void updateGame(Game game)
+    {
+        dbHelper.updateGame(game);
     }
 
     private List<Game> getGames()
@@ -56,6 +70,6 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
     protected void onPostExecute(List<Game> resultingGames)
     {
         //Sends list of all games in the database to the BrowseGames activity
-        listener.syncGames(resultingGames, addingItems);
+        listener.syncGames(resultingGames, option);
     }
 }

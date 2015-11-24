@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface DatabaseListener
 {
-    void syncGames(List<Game> games, boolean addedItems);
+    void syncGames(List<Game> games, short option);
 }

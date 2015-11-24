@@ -42,17 +42,17 @@ public class GameDBHelper extends SQLiteOpenHelper
         database.execSQL(CREATE_STMT);
     }
 
-    public void addGame(String title, String releaseDate, String description, String link)
+    public void addGame(Game game)
     {
         // obtain a database connection
         SQLiteDatabase database = this.getWritableDatabase();
 
         // insert the data into the database
         ContentValues values = new ContentValues();
-        values.put("title", title);
-        values.put("releaseDate", releaseDate);
-        values.put("description", description);
-        values.put("link", link);
+        values.put("title", game.getTitle());
+        values.put("releaseDate", game.getReleaseDate());
+        values.put("description", game.getDescription());
+        values.put("link", game.getLink());
         long gameId = database.insert(TABLE_NAME, null, values);
     }
 
@@ -95,7 +95,7 @@ public class GameDBHelper extends SQLiteOpenHelper
         values.put("releaseDate", game.getReleaseDate());
         values.put("description", game.getDescription());
         values.put("link", game.getLink());
-        int numRowsAffected = database.update(TABLE_NAME, values, "title = ?", new String[] { ""
+        int numRowsAffected = database.update(TABLE_NAME, values, "title = ?", new String[]{""
                 + game.getTitle() });
 
         Log.i("DatabaseAccess", "updateGame(" + game + "):  numRowsAffected: " + numRowsAffected);
