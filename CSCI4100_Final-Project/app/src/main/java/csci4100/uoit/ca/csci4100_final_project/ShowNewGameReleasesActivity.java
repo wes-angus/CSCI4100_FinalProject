@@ -14,17 +14,21 @@ import android.widget.ListView;
 
 import java.util.List;
 
-public class ShowNewGameReleasesActivity extends Activity implements GameDataListener, DatabaseListener {
-
-    String url;
+public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener,
+        GameDataListener
+{
+    //TODO: Replace internet functionality with database functionality
+    //I will remove this later
+    private static final String url = "http://www.giantbomb.com/feeds/new_releases/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_new_game_releases);
 
-        //loads the internet file in an AsyncTask
-        url = getIntent().getStringExtra("url");
+        //I will remove this later
+        //Loads the internet file in an AsyncTask
         DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
         task.execute(url);
     }
@@ -52,21 +56,27 @@ public class ShowNewGameReleasesActivity extends Activity implements GameDataLis
     }
 
     @Override
-    public void showStories(final List<Game> data)
+    public void syncGames(final List<Game> games, short option)
     {
-        ListView listView = (ListView)findViewById(R.id.game_listView);
-        populateList(listView, data);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        if(option == 1)
         {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3)
+            if(!games.isEmpty())
             {
-                String url = data.get(position).getLink();
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
+                ListView listView = (ListView) findViewById(R.id.game_listView);
+                populateList(listView, games);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+                    {
+                        String url = games.get(position).getLink();
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                    }
+                });
             }
-        });
+        }
     }
 
     private void populateList(ListView listView, List<Game> data)
@@ -74,9 +84,22 @@ public class ShowNewGameReleasesActivity extends Activity implements GameDataLis
         listView.setAdapter(new GameAdapter(this, data));
     }
 
+    //I will remove this later
     @Override
-    public void syncGames(List<Game> games, boolean addedItems)
+    public void setGames(final List<Game> data)
     {
+        ListView listView = (ListView) findViewById(R.id.game_listView);
+        populateList(listView, data);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+            {
+                String url = data.get(position).getLink();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });
     }
 }

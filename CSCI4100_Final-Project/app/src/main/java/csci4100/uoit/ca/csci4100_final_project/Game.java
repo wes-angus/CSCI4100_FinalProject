@@ -2,7 +2,9 @@
 
 package csci4100.uoit.ca.csci4100_final_project;
 
-public class Game {
+//TODO: Add "willBuy" property for database purposes
+public class Game
+{
     private String title;
     private String releaseDate;
     private String description;

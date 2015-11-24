@@ -14,6 +14,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
     private GameDBHelper dbHelper = null;
     short option = -1;
 
+    //Use getApplicationContext() for context
     public LoadDatabaseInfoTask(DatabaseListener listener, Context context)
     {
         this.listener = listener;
@@ -25,11 +26,14 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
     {
         /*
         This variable determines which database function to use
-        0 = Add multiple games and get the list of games, 1 = get the list of games only,
-        2 = Update all of the games and get the updated list
+        0 = Add multiple games, 1 = get the list of games only, 2 = Update the list of games
         */
         option = (short) params[0];
-        List<Game> games = (List<Game>) params[1];
+        List<Game> games = new ArrayList<>();
+        if(option != 1)
+        {
+            games = (List<Game>) params[1];
+        }
 
         switch (option)
         {
@@ -39,6 +43,9 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
                     addGame(game);
                 }
                 break;
+            case 1:
+                games = getGames();
+                break;
             case 2:
                 for (Game game : games)
                 {
@@ -46,7 +53,6 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
                 }
                 break;
         }
-        games = getGames();
 
         return games;
     }

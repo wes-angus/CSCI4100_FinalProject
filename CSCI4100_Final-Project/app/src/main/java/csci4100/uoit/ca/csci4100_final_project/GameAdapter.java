@@ -52,7 +52,7 @@ public class GameAdapter extends BaseAdapter
             convertView = inflater.inflate(R.layout.list_view_game_item, parent, false);
         }
 
-        // populate the views with the data from story
+        // populate the views with the data from the feed
         TextView lblTitle = (TextView)convertView.findViewById(R.id.lblTitle);
         lblTitle.setText(gameToDisplay.getTitle());
 

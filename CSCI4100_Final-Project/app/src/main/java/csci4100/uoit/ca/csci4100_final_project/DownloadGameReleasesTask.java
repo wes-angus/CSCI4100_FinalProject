@@ -81,6 +81,6 @@ public class DownloadGameReleasesTask extends AsyncTask<String, Void, List<Game>
             exception.printStackTrace();
         }
 
-        this.listener.showStories(result);
+        this.listener.setGames(result);
     }
 }

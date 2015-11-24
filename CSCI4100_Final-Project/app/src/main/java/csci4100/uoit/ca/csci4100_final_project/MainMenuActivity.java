@@ -4,16 +4,24 @@ package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 
-public class MainMenuActivity extends Activity {
+import java.util.List;
+
+public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
+{
+    private static final String url = "http://www.giantbomb.com/feeds/new_releases/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
     }
@@ -43,9 +51,18 @@ public class MainMenuActivity extends Activity {
     public void showFeed(View view)
     {
         Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
-        EditText url_TextView = (EditText)findViewById(R.id.url_txt);
-        String url = url_TextView.getText().toString();
-        intent.putExtra("url", url);
         startActivity(intent);
+    }
+
+    @Override
+    public void setGames(final List<Game> data)
+    {
+
+    }
+
+    @Override
+    public void syncGames(List<Game> games, short option)
+    {
+
     }
 }
