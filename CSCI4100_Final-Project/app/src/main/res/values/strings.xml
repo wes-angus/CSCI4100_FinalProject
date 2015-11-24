@@ -4,7 +4,7 @@
     <string name="button_txt">Show Feed</string>
     <string name="label_txt">URL:</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_show_feed">Show Feed</string>
+    <string name="title_activity_show_new_game_releases">Show New Game Releases</string>
 
     <string name="hello_world">Hello world!</string>
 </resources>

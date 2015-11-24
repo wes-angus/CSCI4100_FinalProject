@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="csci4100.uoit.ca.csci4100_final_project.EnterURLActivity"
+            android:name=".MainMenuActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,8 +20,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="csci4100.uoit.ca.csci4100_final_project.ShowFeedActivity"
-            android:label="@string/title_activity_show_feed" >
+            android:name=".ShowNewGameReleasesActivity"
+            android:label="@string/title_activity_show_new_game_releases" >
         </activity>
     </application>
 

@@ -1,3 +1,5 @@
+//Authors: Wesley Angus
+
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
@@ -6,27 +8,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class ShowFeedActivity extends Activity implements StoryDataListener {
+public class ShowNewGameReleasesActivity extends Activity implements GameDataListener {
 
     String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_feed);
+        setContentView(R.layout.activity_show_new_game_releases);
 
         //loads the internet file in an AsyncTask
         url = getIntent().getStringExtra("url");
-        DownloadFeedTask task = new DownloadFeedTask(this);
+        DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
         task.execute(url);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_show_feed, menu);
+        getMenuInflater().inflate(R.menu.menu_show_new_game_releases, menu);
         return true;
     }
 
@@ -46,14 +48,14 @@ public class ShowFeedActivity extends Activity implements StoryDataListener {
     }
 
     @Override
-    public void showStories(ArrayList<Story> data)
+    public void showStories(List<Game> data)
     {
-        ListView listView = (ListView)findViewById(R.id.story_listView);
+        ListView listView = (ListView)findViewById(R.id.game_listView);
         populateList(listView, data);
     }
 
-    private void populateList(ListView listView, ArrayList<Story> data)
+    private void populateList(ListView listView, List<Game> data)
     {
-        listView.setAdapter(new StoryAdapter(this, data));
+        listView.setAdapter(new GameAdapter(this, data));
     }
 }

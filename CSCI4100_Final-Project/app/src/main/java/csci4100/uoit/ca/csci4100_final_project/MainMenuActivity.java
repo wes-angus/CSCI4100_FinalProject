@@ -1,3 +1,5 @@
+//Authors: Wesley Angus
+
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
@@ -8,18 +10,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-public class EnterURLActivity extends Activity {
+public class MainMenuActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_enter_url);
+        setContentView(R.layout.activity_main_menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_enter_url, menu);
+        getMenuInflater().inflate(R.menu.menu_main_menu, menu);
         return true;
     }
 
@@ -40,7 +42,7 @@ public class EnterURLActivity extends Activity {
 
     public void showFeed(View view)
     {
-        Intent intent = new Intent(this, ShowFeedActivity.class);
+        Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
         EditText url_TextView = (EditText)findViewById(R.id.url_txt);
         String url = url_TextView.getText().toString();
         intent.putExtra("url", url);
