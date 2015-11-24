@@ -12,11 +12,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class GameAdapter extends BaseAdapter {
+public class GameAdapter extends BaseAdapter
+{
     private Context context;
     private List<Game> data;
 
-    public GameAdapter(Context context, List<Game> data) {
+    public GameAdapter(Context context, List<Game> data)
+    {
         this.data = data;
         this.context = context;
     }
@@ -33,15 +35,17 @@ public class GameAdapter extends BaseAdapter {
         return position;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
         Game gameToDisplay = data.get(position);
 
         Log.d("GameAdapter", "Game:");
-        Log.d("GameAdapter", "  Title:   "+ gameToDisplay.getTitle());
-        Log.d("GameAdapter", "  Release Date:  "+ gameToDisplay.getReleaseDate());
-        Log.d("GameAdapter", "  Content: "+ gameToDisplay.getDescription());
+        Log.d("GameAdapter", "  Title:         " + gameToDisplay.getTitle());
+        Log.d("GameAdapter", "  Release Date:  " + gameToDisplay.getReleaseDate());
+        Log.d("GameAdapter", "  Description:   " + gameToDisplay.getDescription());
 
-        if (convertView == null) {
+        if (convertView == null)
+        {
             // create the layout
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
