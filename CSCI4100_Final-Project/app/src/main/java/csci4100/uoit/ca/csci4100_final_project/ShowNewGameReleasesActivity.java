@@ -16,9 +16,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Scroll down to see the updated item in the ListView
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
-    public static final int MODIFY_GAME_LIST = 10;
+    public static final int MODIFY_GAME = 10;
     ArrayList<Game> games = new ArrayList<>();
 
     @Override
@@ -30,6 +31,8 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         //Gets the list of games from the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
         task.execute((short) 1);
+
+
     }
 
     @Override
@@ -57,7 +60,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     @Override
     public void syncGames(final ArrayList<Game> games, short option)
     {
-        if(option == 1)
+        if(option == 1 || option == 2)
         {
             if(!(games.isEmpty() || games == null))
             {
@@ -71,16 +74,15 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                     @Override
                     public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
                     {
-                        String url = games.get(position).getLink();
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
+                        goToModifyScreen(position);
                     }
                 });
             }
-        }
-        else if (option == 2)
-        {
-            Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
+
+            if (option == 2)
+            {
+                Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -89,13 +91,14 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         listView.setAdapter(new GameAdapter(this, data));
     }
 
-    public void goToModifyScreen(View view)
+    public void goToModifyScreen(int gamePosition)
     {
-        Intent intent = new Intent(this, ModifyGameListActivity.class);
+        Intent intent = new Intent(this, GameDetailAndModifyActivity.class);
         Bundle gamesBundle = new Bundle();
-        gamesBundle.putParcelableArrayList("newGameList", games);
+        gamesBundle.putParcelable("game", games.get(gamePosition));
         intent.putExtras(gamesBundle);
-        startActivityForResult(intent, MODIFY_GAME_LIST);
+        intent.putExtra("game_position", gamePosition);
+        startActivityForResult(intent, MODIFY_GAME);
     }
 
     public void backToMenu(View view)
@@ -110,19 +113,17 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         super.onActivityResult(reqCode, resCode, result);
         if (resCode == Activity.RESULT_OK)
         {
-            if(reqCode == MODIFY_GAME_LIST)
+            if(reqCode == MODIFY_GAME)
             {
-                //Update the "willBuy" property of the list of games in the database
-                if(!games.isEmpty())
-                {
-                    /*boolean[] willBuyProperties = result.getBooleanArrayExtra("will_buy_array");
-                    for (int i=0; i<games.size(); i++)
-                    {
-                        games.get(i).setWillBuy(willBuyProperties[i]);
-                    }*/
-                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                    task.execute((short) 2, games);
-                }
+                /*
+                Updates the "willBuy" property of the game that was selected in the database
+                and gets the updated list of games to update the ListView.
+                */
+                int gamePosition = result.getIntExtra("game_position", 0);
+                Game receivedGame = games.get(gamePosition);
+                receivedGame.setWhenWillBuy(result.getStringExtra("when_will_buy"));
+                LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                task.execute((short) 2, receivedGame);
             }
         }
     }

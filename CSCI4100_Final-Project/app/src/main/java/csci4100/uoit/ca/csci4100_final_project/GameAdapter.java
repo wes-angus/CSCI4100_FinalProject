@@ -33,7 +33,8 @@ public class GameAdapter extends BaseAdapter {
         return position;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
         Game gameToDisplay = data.get(position);
 
         Log.d("GameAdapter", "Game:");
@@ -41,7 +42,8 @@ public class GameAdapter extends BaseAdapter {
         Log.d("GameAdapter", "  Release Date:  "+ gameToDisplay.getReleaseDate());
         Log.d("GameAdapter", "  Content: "+ gameToDisplay.getDescription());
 
-        if (convertView == null) {
+        if (convertView == null)
+        {
             // create the layout
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -55,8 +57,12 @@ public class GameAdapter extends BaseAdapter {
         TextView lblReleaseDate = (TextView)convertView.findViewById(R.id.lblReleaseDate);
         lblReleaseDate.setText(gameToDisplay.getReleaseDate());
 
+        TextView lblWhenWillBuy = (TextView)convertView.findViewById(R.id.lblWhenWillBuy);
+        lblWhenWillBuy.setText(R.string.will_i_buy);
+        lblWhenWillBuy.setText(lblWhenWillBuy.getText() + " " + gameToDisplay.getWhenWillBuy());
+
         TextView lblDesc = (TextView)convertView.findViewById(R.id.lblDesc);
-        lblDesc.setText(gameToDisplay.getDescription());
+        lblDesc.setText(R.string.item_click_instructions);
 
         return convertView;
     }

@@ -22,7 +22,7 @@
             android:name=".ShowNewGameReleasesActivity"
             android:label="@string/title_activity_show_new_game_releases"></activity>
         <activity
-            android:name=".ModifyGameListActivity"
+            android:name=".GameDetailAndModifyActivity"
             android:label="@string/title_activity_modify_game_list"></activity>
     </application>
 

@@ -1,0 +1,77 @@
+//Authors: Wesley Angus
+
+package csci4100.uoit.ca.csci4100_final_project;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+public class GameDetailAndModifyActivity extends Activity
+{
+    Game game;
+    Spinner spinner;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game_detail_and_modify);
+
+        Bundle bundle = getIntent().getExtras();
+        game = bundle.getParcelable("game");
+        spinner = (Spinner) findViewById(R.id.willBuy_spinner);
+        if(game != null) {
+            populateSpinner(spinner, R.array.options, game.getWhenWillBuy());
+            showGameInfo(game);
+        }
+    }
+
+    private void showGameInfo(Game game)
+    {
+        TextView titleView = (TextView) findViewById(R.id.title_txt);
+        titleView.setText(game.getTitle());
+        TextView rDateView = (TextView) findViewById(R.id.rDate_txt);
+        rDateView.setText(game.getReleaseDate());
+        TextView descView = (TextView) findViewById(R.id.desc_txt);
+        descView.setText(game.getDescription());
+    }
+
+    private void populateSpinner(Spinner spinner, int arrayId, String whenWillBuy)
+    {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, arrayId,
+                android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        if(!whenWillBuy.isEmpty())
+        {
+            spinner.setSelection(adapter.getPosition(whenWillBuy));
+        }
+    }
+
+    public void saveWillBuyProperty(View view)
+    {
+        Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
+        intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
+        intent.putExtra("game_position", getIntent().getIntExtra("game_position", 0));
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
+
+    public void cancelModify(View view)
+    {
+        setResult(Activity.RESULT_CANCELED);
+        finish();
+    }
+
+    public void openGameLink(View view)
+    {
+        String url = game.getLink();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
+    }
+}

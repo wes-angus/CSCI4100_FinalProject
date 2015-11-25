@@ -50,16 +50,7 @@ public class DownloadGameReleasesTask extends AsyncTask<String, Void, List<Game>
                     String releaseDate = releaseDateElements.item(0).getTextContent();
                     releaseDate = releaseDate.substring(0, releaseDate.indexOf(":") - 3);
                     NodeList descElements = gameElement.getElementsByTagName("description");
-                    String baseDesc = "Click on entry for more information.";
-                    String description;
-                    if(!descElements.item(0).getTextContent().isEmpty())
-                    {
-                        description = descElements.item(0).getTextContent() + "\n\n" + baseDesc;
-                    }
-                    else
-                    {
-                        description = descElements.item(0).getTextContent() + "\n" + baseDesc;
-                    }
+                    String description = descElements.item(0).getTextContent();
                     NodeList linkElements = gameElement.getElementsByTagName("link");
                     String link = linkElements.item(0).getTextContent();
                     gameData.add(new Game(title, releaseDate, description, link));

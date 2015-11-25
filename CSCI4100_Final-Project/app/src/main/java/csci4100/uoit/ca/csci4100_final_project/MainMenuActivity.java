@@ -4,14 +4,10 @@ package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -78,5 +74,10 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     {
         Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
         startActivity(intent);
+    }
+
+    public void viewAboutText(View view)
+    {
+
     }
 }

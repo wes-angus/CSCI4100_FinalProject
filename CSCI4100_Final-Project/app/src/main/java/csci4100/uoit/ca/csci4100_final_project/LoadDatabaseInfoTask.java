@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game>>
 {
@@ -26,13 +25,21 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game
     {
         /*
         This variable determines which database function to use
-        0 = Add multiple games, 1 = get the list of games only, 2 = Update the list of games
+        0 = Add multiple games, 1 = get the list of games only, 2 = Update the given game
         */
         option = (short) params[0];
         ArrayList<Game> games = new ArrayList<>();
-        if(option != 1)
+        Game singleGame = null;
+        if(option == 0)
         {
-            games = (ArrayList<Game>) params[1];
+            if(params[1] != null)
+            {
+                games = (ArrayList<Game>) params[1];
+            }
+        }
+        else if(option == 2)
+        {
+            singleGame = (Game) params[1];
         }
 
         switch (option)
@@ -47,10 +54,8 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game
                 games = getGames();
                 break;
             case 2:
-                for (Game game : games)
-                {
-                    updateGame(game);
-                }
+                updateGame(singleGame);
+                games = getGames();
                 break;
         }
 

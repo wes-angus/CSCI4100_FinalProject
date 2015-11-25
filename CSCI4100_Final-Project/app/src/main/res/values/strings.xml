@@ -1,13 +1,12 @@
 <resources>
     <string name="app_name">New Game Release Manager</string>
 
-    <string name="button_txt">Show Feed</string>
-    <string name="label_txt">URL:</string>
+    <string name="show_game_list">Show List of New Game Releases</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_show_new_game_releases">Show New Game Releases</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="will_buy">Will Buy</string>
+    <string name="will_buy">When will you purchase this game?</string>
     <string name="title_activity_modify_game_list">Modify Game List</string>
     <string name="modify">Modify</string>
     <string name="back">Back</string>
@@ -16,4 +15,13 @@
     <string name="mod_success">New Game List updated successfully!</string>
     <string name="games_added">New Game Releases added to database!</string>
     <string name="games_downloaded">New Game Releases parsed + downloaded!</string>
+    <string name="about">About</string>
+    <string name="title">Title:</string>
+    <string name="rDate">Release Date:</string>
+    <string name="description">Description:</string>
+    <string name="more_info">Click for More Information</string>
+    <string name="reset">Reset</string>
+    <string name="item_click_instructions">Click on entry for more information,
+        as well as to state when you are planning to purchase it.</string>
+    <string name="will_i_buy">I am planning to purchase this item:</string>
 </resources>

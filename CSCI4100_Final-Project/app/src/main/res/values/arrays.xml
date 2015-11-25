@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="options">
+        <item>Unsure</item>
+        <item>Already Pre-Ordered</item>
+        <item>On Release Date</item>
+        <item>When I Have the Money</item>
+        <item>When It Goes on Sale</item>
+        <item>Not Planning to Buy It</item>
+    </string-array>
+</resources>
