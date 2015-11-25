@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -33,7 +35,18 @@ public class ModifyGameListActivity extends Activity
 
     private void populateList(ListView listView, List<Game> data)
     {
-        listView.setAdapter(new GameAdapter(this, data, true));
+        listView.setAdapter(new ModGameAdapter(this, data));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                TextView lblTitle = (TextView) view.getTag(R.id.lblTitle);
+                CheckBox checkBox = (CheckBox) view.getTag(R.id.cBoxWillBuy);
+                Toast.makeText(view.getContext(), lblTitle.getText().toString() + " (Will Buy): " +
+                        checkBox.isChecked(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void showGameList(List<Game> data)

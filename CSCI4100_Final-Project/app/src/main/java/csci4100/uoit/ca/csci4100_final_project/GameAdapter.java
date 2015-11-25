@@ -8,22 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class GameAdapter extends BaseAdapter
-{
+public class GameAdapter extends BaseAdapter {
     private Context context;
     private List<Game> data;
-    private boolean modList;
 
-    public GameAdapter(Context context, List<Game> data, boolean modList)
-    {
+    public GameAdapter(Context context, List<Game> data) {
         this.data = data;
         this.context = context;
-        this.modList = modList;
     }
 
     public int getCount() {
@@ -38,35 +33,22 @@ public class GameAdapter extends BaseAdapter
         return position;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
+    public View getView(int position, View convertView, ViewGroup parent) {
         Game gameToDisplay = data.get(position);
 
         Log.d("GameAdapter", "Game:");
-        Log.d("GameAdapter", "  Title:         " + gameToDisplay.getTitle());
-        Log.d("GameAdapter", "  Release Date:  " + gameToDisplay.getReleaseDate());
-        Log.d("GameAdapter", "  Description:   " + gameToDisplay.getDescription());
+        Log.d("GameAdapter", "  Title:   "+ gameToDisplay.getTitle());
+        Log.d("GameAdapter", "  Release Date:  "+ gameToDisplay.getReleaseDate());
+        Log.d("GameAdapter", "  Content: "+ gameToDisplay.getDescription());
 
-        if (convertView == null)
-        {
-            if(modList)
-            {
-                // create the layout (for the normal list view)
-                LayoutInflater inflater = (LayoutInflater) context
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.list_view_mod_game_item, parent, false);
-            }
-            else
-            {
-                // create the layout (for the "modify" list view)
-                LayoutInflater inflater = (LayoutInflater) context
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.list_view_game_item, parent, false);
-            }
+        if (convertView == null) {
+            // create the layout
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.list_view_game_item, parent, false);
         }
 
-        // populate the views with the data from the feed
+        // populate the views with the data from story
         TextView lblTitle = (TextView)convertView.findViewById(R.id.lblTitle);
         lblTitle.setText(gameToDisplay.getTitle());
 
@@ -76,13 +58,6 @@ public class GameAdapter extends BaseAdapter
         TextView lblDesc = (TextView)convertView.findViewById(R.id.lblDesc);
         lblDesc.setText(gameToDisplay.getDescription());
 
-        if(modList)
-        {
-            CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.cBoxWillBuy);
-            checkBox.setChecked(gameToDisplay.isWillBuy());
-        }
-
         return convertView;
     }
 }
-

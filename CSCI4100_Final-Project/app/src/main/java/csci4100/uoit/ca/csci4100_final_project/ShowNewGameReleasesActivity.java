@@ -86,7 +86,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
     private void populateList(ListView listView, List<Game> data)
     {
-        listView.setAdapter(new GameAdapter(this, data, false));
+        listView.setAdapter(new GameAdapter(this, data));
     }
 
     public void goToModifyScreen(View view)
