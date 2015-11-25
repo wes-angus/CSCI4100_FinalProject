@@ -13,10 +13,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Add "About" button to display more information about the app in a separate activity
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
-    private static final String url = "http://www.gamespot.com/feeds/new-games/";
+    private static final String url = "http://www.gamespot.com/feeds/new-releases/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -78,6 +77,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
     public void viewAboutText(View view)
     {
-
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
     }
 }

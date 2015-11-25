@@ -24,4 +24,18 @@
     <string name="item_click_instructions">Click on entry for more information,
         as well as to state when you are planning to purchase it.</string>
     <string name="will_i_buy">I am planning to purchase this item:</string>
+    <string name="title_activity_about">About</string>
+    <string name="author_txt" >
+        This application was co-created by Wesley Angus and Montgomery Alban for a final project in
+        the CSCI 4100 course at UOIT (also known as Mobile Devices).
+    </string>
+    <string name="about_txt_p1" >
+        This is an application that lets you view and manage a list of upcoming video games,
+        as well as when you are planning to purchase each game (if at all).
+    </string>
+    <string name="about_txt_p2" >
+        The RSS Feed used in this application is taken from one of the free feeds available from
+        GameSpot.com, specifically the list of upcoming releases at:
+        gamespot.com/feeds/new-releases/.
+    </string>
 </resources>

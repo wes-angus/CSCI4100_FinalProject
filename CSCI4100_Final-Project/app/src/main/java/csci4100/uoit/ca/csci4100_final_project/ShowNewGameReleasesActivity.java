@@ -20,7 +20,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Scroll down to see the updated item in the ListView
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
     public static final int MODIFY_GAME = 10;
