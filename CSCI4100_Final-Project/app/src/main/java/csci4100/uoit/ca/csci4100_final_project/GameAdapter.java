@@ -76,8 +76,11 @@ public class GameAdapter extends BaseAdapter
         TextView lblDesc = (TextView)convertView.findViewById(R.id.lblDesc);
         lblDesc.setText(gameToDisplay.getDescription());
 
-        CheckBox checkBox = (CheckBox)convertView.findViewById(R.id.cBoxWillBuy);
-        checkBox.setChecked(gameToDisplay.isWillBuy());
+        if(modList)
+        {
+            CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.cBoxWillBuy);
+            checkBox.setChecked(gameToDisplay.isWillBuy());
+        }
 
         return convertView;
     }
