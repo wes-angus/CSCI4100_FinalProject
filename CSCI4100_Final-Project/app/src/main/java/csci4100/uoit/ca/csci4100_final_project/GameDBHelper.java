@@ -59,15 +59,37 @@ public class GameDBHelper extends SQLiteOpenHelper
         Log.i("DatabaseAccess", "addGame(" + game.getTitle() + ")");
     }
 
-    //Query all games in the database
-    public List<Game> getAllGames()
+    public boolean gameExists(String title)
     {
-        List<Game> games = new ArrayList<>();
+        boolean found = false;
+
+        // obtain a database connection
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        // retrieve the game from the database
+        String[] columns = new String[] { "title", "releaseDate", "description", "link", "willBuy" };
+        String whereClause = "title = ?";
+        String[] whereArgs = new String[]{ title };
+        Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", "");
+        if (cursor.getCount() >= 1)
+        {
+            found = true;
+        }
+        cursor.close();
+        Log.i("DatabaseAccess", "getGame(" + title + "):  found: " + found);
+
+        return found;
+    }
+
+    //Query all games in the database
+    public ArrayList<Game> getAllGames()
+    {
+        ArrayList<Game> games = new ArrayList<>();
 
         //Get a connection to the database
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] columns = new String[] { "title", "releaseDate", "description", "link" };
+        String[] columns = new String[] { "title", "releaseDate", "description", "link", "willBuy" };
         Cursor cursor = database.query(TABLE_NAME, columns, "", new String[]{}, "", "", "");
         cursor.moveToFirst();
         //Continue adding games to the list while more are found

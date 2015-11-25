@@ -2,9 +2,9 @@
 
 package csci4100.uoit.ca.csci4100_final_project;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface DatabaseListener
 {
-    void syncGames(List<Game> games, short option);
+    void syncGames(ArrayList<Game> games, short option);
 }

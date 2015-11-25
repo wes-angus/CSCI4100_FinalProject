@@ -11,16 +11,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Add Save/Cancel buttons to layout and implement database updating
-public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener,
-        GameDataListener
+public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
-    //TODO: Replace internet functionality with database functionality
-    //I will remove this later
-    private static final String url = "http://www.giantbomb.com/feeds/new_releases/";
+    public static final int MODIFY_GAME_LIST = 10;
+    ArrayList<Game> games = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,10 +27,9 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_new_game_releases);
 
-        //I will remove this later
-        //Loads the internet file in an AsyncTask
-        DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
-        task.execute(url);
+        //Gets the list of games from the database
+        LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+        task.execute((short) 1);
     }
 
     @Override
@@ -57,14 +55,16 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     }
 
     @Override
-    public void syncGames(final List<Game> games, short option)
+    public void syncGames(final ArrayList<Game> games, short option)
     {
         if(option == 1)
         {
-            if(!games.isEmpty())
+            if(!(games.isEmpty() || games == null))
             {
                 ListView listView = (ListView) findViewById(R.id.game_listView);
                 populateList(listView, games);
+
+                this.games = games;
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                 {
@@ -78,29 +78,52 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 });
             }
         }
-    }
-
-    public void populateList(ListView listView, List<Game> data)
-    {
-        listView.setAdapter(new GameAdapter(this, data));
-    }
-
-    //I will remove this later
-    @Override
-    public void setGames(final List<Game> data)
-    {
-        ListView listView = (ListView) findViewById(R.id.game_listView);
-        populateList(listView, data);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        else if (option == 2)
         {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+            Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void populateList(ListView listView, List<Game> data)
+    {
+        listView.setAdapter(new GameAdapter(this, data, false));
+    }
+
+    public void goToModifyScreen(View view)
+    {
+        Intent intent = new Intent(this, ModifyGameListActivity.class);
+        Bundle gamesBundle = new Bundle();
+        gamesBundle.putParcelableArrayList("newGameList", games);
+        intent.putExtras(gamesBundle);
+        startActivityForResult(intent, MODIFY_GAME_LIST);
+    }
+
+    public void backToMenu(View view)
+    {
+        finish();
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent result)
+    {
+        //Gets a result back from the AskQuestion activity
+        super.onActivityResult(reqCode, resCode, result);
+        if (resCode == Activity.RESULT_OK)
+        {
+            if(reqCode == MODIFY_GAME_LIST)
             {
-                String url = data.get(position).getLink();
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
+                //Update the "willBuy" property of the list of games in the database
+                if(!games.isEmpty())
+                {
+                    /*boolean[] willBuyProperties = result.getBooleanArrayExtra("will_buy_array");
+                    for (int i=0; i<games.size(); i++)
+                    {
+                        games.get(i).setWillBuy(willBuyProperties[i]);
+                    }*/
+                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                    task.execute((short) 2, games);
+                }
             }
-        });
+        }
     }
 }

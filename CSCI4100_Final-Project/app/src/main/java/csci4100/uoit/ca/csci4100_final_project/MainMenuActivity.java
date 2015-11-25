@@ -12,7 +12,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //TODO: Add "About" button to display more information about the app in a separate activity
@@ -25,6 +27,10 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        //Parses the new game releases feed in an AsyncTask
+        DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
+        task.execute(url);
     }
 
     @Override
@@ -49,21 +55,28 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         return super.onOptionsItemSelected(item);
     }
 
-    public void showFeed(View view)
-    {
-        Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public void setGames(final List<Game> data)
     {
+        Toast.makeText(this, R.string.games_downloaded, Toast.LENGTH_SHORT).show();
 
+        //Adds the list of games to the database
+        LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+        task.execute((short) 0, data);
     }
 
     @Override
-    public void syncGames(List<Game> games, short option)
+    public void syncGames(ArrayList<Game> games, short option)
     {
+        if(option == 0)
+        {
+            Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    public void showGameList(View view)
+    {
+        Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
+        startActivity(intent);
     }
 }

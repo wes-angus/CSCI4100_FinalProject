@@ -8,11 +8,7 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-TODO: Add check that only adds a game if it does not already exist, to avoid
-TODO: overwriting the "willBuy" property when adding the same game twice.
-*/
-public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
+public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game>>
 {
     private DatabaseListener listener = null;
     private GameDBHelper dbHelper = null;
@@ -26,17 +22,17 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
     }
 
     @Override
-    protected List<Game> doInBackground(Object... params)
+    protected ArrayList<Game> doInBackground(Object... params)
     {
         /*
         This variable determines which database function to use
         0 = Add multiple games, 1 = get the list of games only, 2 = Update the list of games
         */
         option = (short) params[0];
-        List<Game> games = new ArrayList<>();
+        ArrayList<Game> games = new ArrayList<>();
         if(option != 1)
         {
-            games = (List<Game>) params[1];
+            games = (ArrayList<Game>) params[1];
         }
 
         switch (option)
@@ -63,7 +59,10 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 
     private void addGame(Game game)
     {
-        dbHelper.addGame(game);
+        if(!dbHelper.gameExists(game.getTitle()))
+        {
+            dbHelper.addGame(game);
+        }
     }
 
     private void updateGame(Game game)
@@ -71,13 +70,13 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         dbHelper.updateGame(game);
     }
 
-    private List<Game> getGames()
+    private ArrayList<Game> getGames()
     {
         return dbHelper.getAllGames();
     }
 
     @Override
-    protected void onPostExecute(List<Game> resultingGames)
+    protected void onPostExecute(ArrayList<Game> resultingGames)
     {
         //Sends list of all games in the database to the BrowseGames activity
         listener.syncGames(resultingGames, option);

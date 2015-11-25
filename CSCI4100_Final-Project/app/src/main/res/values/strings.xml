@@ -9,4 +9,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="will_buy">Will Buy</string>
     <string name="title_activity_modify_game_list">Modify Game List</string>
+    <string name="modify">Modify</string>
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="mod_success">New Game List updated successfully!</string>
+    <string name="games_added">New Game Releases added to database!</string>
+    <string name="games_downloaded">New Game Releases parsed + downloaded!</string>
 </resources>

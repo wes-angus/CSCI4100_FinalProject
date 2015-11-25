@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
@@ -16,11 +17,13 @@ public class GameAdapter extends BaseAdapter
 {
     private Context context;
     private List<Game> data;
+    private boolean modList;
 
-    public GameAdapter(Context context, List<Game> data)
+    public GameAdapter(Context context, List<Game> data, boolean modList)
     {
         this.data = data;
         this.context = context;
+        this.modList = modList;
     }
 
     public int getCount() {
@@ -35,6 +38,7 @@ public class GameAdapter extends BaseAdapter
         return position;
     }
 
+    @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
         Game gameToDisplay = data.get(position);
@@ -46,10 +50,20 @@ public class GameAdapter extends BaseAdapter
 
         if (convertView == null)
         {
-            // create the layout
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_view_game_item, parent, false);
+            if(modList)
+            {
+                // create the layout (for the normal list view)
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.list_view_mod_game_item, parent, false);
+            }
+            else
+            {
+                // create the layout (for the "modify" list view)
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.list_view_game_item, parent, false);
+            }
         }
 
         // populate the views with the data from the feed
@@ -61,6 +75,9 @@ public class GameAdapter extends BaseAdapter
 
         TextView lblDesc = (TextView)convertView.findViewById(R.id.lblDesc);
         lblDesc.setText(gameToDisplay.getDescription());
+
+        CheckBox checkBox = (CheckBox)convertView.findViewById(R.id.cBoxWillBuy);
+        checkBox.setChecked(gameToDisplay.isWillBuy());
 
         return convertView;
     }
