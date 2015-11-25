@@ -3,9 +3,13 @@
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +24,10 @@ import java.util.List;
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
     public static final int MODIFY_GAME = 10;
+    public static final String L_VIEW_STATE = "listView_prevState";
     ArrayList<Game> games = new ArrayList<>();
+    ListView listView;
+    private Parcelable listView_state = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,11 +35,43 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_new_game_releases);
 
+        listView = (ListView) findViewById(R.id.game_listView);
+
         //Gets the list of games from the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
         task.execute((short) 1);
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState)
+    {
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
 
+        // Save the current list view position
+        listView_state = listView.onSaveInstanceState();
+        savedInstanceState.putParcelable(L_VIEW_STATE, listView_state);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore activity state from saved instance
+        listView_state = savedInstanceState.getParcelable(L_VIEW_STATE);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume(); // Always call the superclass method first
+
+        if(listView_state != null)
+        {
+            listView.onRestoreInstanceState(listView_state);
+        }
     }
 
     @Override
@@ -64,7 +103,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         {
             if(!(games.isEmpty() || games == null))
             {
-                ListView listView = (ListView) findViewById(R.id.game_listView);
+                listView = (ListView) findViewById(R.id.game_listView);
                 populateList(listView, games);
 
                 this.games = games;
@@ -77,6 +116,11 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                         goToModifyScreen(position);
                     }
                 });
+
+                if(listView_state != null)
+                {
+                    listView.onRestoreInstanceState(listView_state);
+                }
             }
 
             if (option == 2)
