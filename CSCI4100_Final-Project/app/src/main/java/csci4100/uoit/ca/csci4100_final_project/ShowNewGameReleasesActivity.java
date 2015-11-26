@@ -27,6 +27,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     ArrayList<Game> games = new ArrayList<>();
     ListView listView;
     private Parcelable listView_state = null;
+    int scrollPos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -71,6 +72,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         {
             listView.onRestoreInstanceState(listView_state);
         }
+        listView_state = null;
     }
 
     @Override
@@ -100,7 +102,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     {
         if(option == 1 || option == 2)
         {
-            if(!(games.isEmpty() || games == null))
+            if(!(games.isEmpty()))
             {
                 listView = (ListView) findViewById(R.id.game_listView);
                 populateList(listView, games);
@@ -115,15 +117,11 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                         goToModifyScreen(position);
                     }
                 });
-
-                if(listView_state != null)
-                {
-                    listView.onRestoreInstanceState(listView_state);
-                }
             }
 
             if (option == 2)
             {
+                listView.setSelection(scrollPos);
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
             }
         }
@@ -164,9 +162,14 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 */
                 int gamePosition = result.getIntExtra("game_position", 0);
                 Game receivedGame = games.get(gamePosition);
-                receivedGame.setWhenWillBuy(result.getStringExtra("when_will_buy"));
-                LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                task.execute((short) 2, receivedGame);
+                String new_whenWillBuy = result.getStringExtra("when_will_buy");
+                if(!receivedGame.getWhenWillBuy().equals(new_whenWillBuy))
+                {
+                    receivedGame.setWhenWillBuy(new_whenWillBuy);
+                    scrollPos = gamePosition;
+                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                    task.execute((short) 2, receivedGame);
+                }
             }
         }
     }
