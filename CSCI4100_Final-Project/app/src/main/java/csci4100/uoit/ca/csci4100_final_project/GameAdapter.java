@@ -59,7 +59,7 @@ public class GameAdapter extends BaseAdapter {
 
         TextView lblWhenWillBuy = (TextView)convertView.findViewById(R.id.lblWhenWillBuy);
         lblWhenWillBuy.setText(R.string.will_i_buy);
-        lblWhenWillBuy.setText(lblWhenWillBuy.getText() + " " + gameToDisplay.getWhenWillBuy());
+        lblWhenWillBuy.setText(lblWhenWillBuy.getText() + "\n" + gameToDisplay.getWhenWillBuy());
 
         TextView lblDesc = (TextView)convertView.findViewById(R.id.lblDesc);
         lblDesc.setText(R.string.item_click_instructions);

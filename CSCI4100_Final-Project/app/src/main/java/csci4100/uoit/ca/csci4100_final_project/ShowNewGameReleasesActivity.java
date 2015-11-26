@@ -72,7 +72,6 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         {
             listView.onRestoreInstanceState(listView_state);
         }
-        listView_state = null;
     }
 
     @Override
@@ -117,10 +116,14 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                         goToModifyScreen(position);
                     }
                 });
+
+                if(listView_state != null)
+                {
+                    listView.onRestoreInstanceState(listView_state);
+                }
             }
 
-            if (option == 2)
-            {
+            if (option == 2) {
                 listView.setSelection(scrollPos);
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
             }

@@ -31,6 +31,26 @@ public class GameDetailAndModifyActivity extends Activity
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState)
+    {
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+
+        // Save the current spinner selection
+        savedInstanceState.putInt("spinner_pos", spinner.getSelectedItemPosition());
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore activity state from saved instance
+        spinner.setSelection(savedInstanceState.getInt("spinner_pos"));
+    }
+
     private void showGameInfo(Game game)
     {
         TextView titleView = (TextView) findViewById(R.id.title_txt);
