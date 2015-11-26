@@ -17,7 +17,7 @@
         android:id="@+id/saveBtn"
         android:onClick="saveWillBuyProperty"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/title_label" />
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -26,8 +26,7 @@
         android:id="@+id/cancelBtn"
         android:onClick="cancelModify"
         android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/willBuy_spinner"
-        android:layout_marginEnd="29dp" />
+        android:layout_alignEnd="@+id/desc_txt" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,8 +43,8 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/rDate"
         android:id="@+id/rDate_label"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/title_label"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/title_txt"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -54,8 +53,8 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/description"
         android:id="@+id/desc_label"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/rDate_label"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/rDate_txt"
         android:layout_alignParentStart="true" />
 
     <Spinner
@@ -64,16 +63,16 @@
         android:id="@+id/willBuy_spinner"
         android:layout_below="@+id/willBuy_tView"
         android:layout_marginTop="7dp"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/will_buy"
         android:id="@+id/willBuy_tView"
-        android:layout_below="@+id/desc_label"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="60dp" />
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/desc_txt"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -81,9 +80,8 @@
         android:text="@string/more_info"
         android:id="@+id/linkBtn"
         android:onClick="openGameLink"
-        android:layout_above="@+id/saveBtn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="match_parent"
