@@ -4,18 +4,25 @@ package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
-    private static final String url = "http://www.gamespot.com/feeds/new-releases/";
+    private static final String url = "http://www.gamespot.com/feeds/new_releases/";
+    public static SoundPool soundPool;
+    public static int sound1_ID = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -26,6 +33,20 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         //Parses the new game releases feed in an AsyncTask
         DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
         task.execute(url);
+
+        AssetManager assetManager = this.getAssets();
+        AssetFileDescriptor fd;
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+
+        try
+        {
+            fd = assetManager.openFd("retro_beep.wav");
+            sound1_ID = soundPool.load(fd, 0);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -72,12 +93,14 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public void showGameList(View view)
     {
         Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
+        soundPool.play(sound1_ID, 1, 1, 0, 0, 1);
         startActivity(intent);
     }
 
     public void viewAboutText(View view)
     {
         Intent intent = new Intent(this, AboutActivity.class);
+        soundPool.play(sound1_ID, 1, 1, 0, 0, 1);
         startActivity(intent);
     }
 }

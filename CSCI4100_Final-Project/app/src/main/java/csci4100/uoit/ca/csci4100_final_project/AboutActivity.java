@@ -16,6 +16,7 @@ public class AboutActivity extends Activity {
 
     public void backToMenu(View view)
     {
+        MainMenuActivity.soundPool.play(MainMenuActivity.sound1_ID, 1, 1, 0, 0, 1);
         finish();
     }
 }
