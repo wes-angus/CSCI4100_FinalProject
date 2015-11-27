@@ -33,8 +33,12 @@
         The RSS Feed used in this application is taken from one of the free feeds available from
         GameSpot.com, specifically the list of upcoming releases at:
         gamespot.com/feeds/new-releases/.\n\n
-        The sound file \"bubaproducer__laser-shot-silenced.wav\" was taken from user \"bubaproducer\"
+        All of the sounds used in this application were free sounds taken from freesound.org.\n\n
+        The sound file \"laser-shot-silenced.wav\" was taken from user \"bubaproducer\"
         on freesound.org, and is being used under the Creative Commons Attribution 3.0 license.\n
-        link: https://www.freesound.org/people/bubaproducer/sounds/151022/
+        link: https://www.freesound.org/people/bubaproducer/sounds/151022/\n\n
+        The sound file \"menusel.wav\" was taken from user \"RunnerPack\"
+        on freesound.org, and is being used under the Creative Commons Attribution 3.0 license.\n
+        link: https://www.freesound.org/people/bubaproducer/sounds/151022/\n\n
     </string>
 </resources>

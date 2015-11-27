@@ -142,12 +142,13 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         gamesBundle.putParcelable("game", games.get(gamePosition));
         intent.putExtras(gamesBundle);
         intent.putExtra("game_position", gamePosition);
+        MainMenuActivity.soundPool.play(MainMenuActivity.itemClickSound_ID, 1, 1, 4, 0, 1);
         startActivityForResult(intent, MODIFY_GAME);
     }
 
     public void backToMenu(View view)
     {
-        MainMenuActivity.soundPool.play(MainMenuActivity.sound1_ID, 1, 1, 0, 0, 1);
+        MainMenuActivity.soundPool.play(MainMenuActivity.buttonSound1_ID, 1, 1, 0, 0, 1);
         finish();
     }
 
