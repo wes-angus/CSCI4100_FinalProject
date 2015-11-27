@@ -25,17 +25,16 @@
         as well as to state when you are planning to purchase it.</string>
     <string name="will_i_buy">I am planning to purchase this item:</string>
     <string name="title_activity_about">About</string>
-    <string name="author_txt" >
+    <string name="about_txt" >
         This application was co-created by Wesley Angus and Montgomery Alban for a final project in
-        the CSCI 4100 course at UOIT (also known as Mobile Devices).
-    </string>
-    <string name="about_txt_p1" >
+        the CSCI 4100 course at UOIT (also known as Mobile Devices).\n\n
         This is an application that lets you view and manage a list of upcoming video games,
-        as well as when you are planning to purchase each game (if at all).
-    </string>
-    <string name="about_txt_p2" >
+        as well as when you are planning to purchase each game (if at all).\n\n
         The RSS Feed used in this application is taken from one of the free feeds available from
         GameSpot.com, specifically the list of upcoming releases at:
-        gamespot.com/feeds/new-releases/.
+        gamespot.com/feeds/new-releases/.\n\n
+        The sound file \"bubaproducer__laser-shot-silenced.wav\" was taken from user \"bubaproducer\"
+        on freesound.org, and is being used under the Creative Commons Attribution 3.0 license.\n
+        link: https://www.freesound.org/people/bubaproducer/sounds/151022/
     </string>
 </resources>
