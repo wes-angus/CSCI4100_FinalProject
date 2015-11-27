@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -36,7 +37,20 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         AssetManager assetManager = this.getAssets();
         AssetFileDescriptor fd;
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+
+
+        if((android.os.Build.VERSION.SDK_INT) >= 21){ // Checked sdk value, not an error
+            SoundPool.Builder builder = new SoundPool.Builder();
+            builder.setAudioAttributes(new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build());
+            builder.setMaxStreams(5);
+            soundPool = builder.build();
+        }
+        else{
+            soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        }
 
         try
         {

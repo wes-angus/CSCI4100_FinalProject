@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "csci4100.uoit.ca.midterm_story_app"
-        minSdkVersion 21
+        minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
