@@ -2,6 +2,7 @@
 
 package csci4100.uoit.ca.csci4100_final_project;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -26,6 +28,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public static int sound1_ID = -1;
 
     @Override
+    //@SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -45,10 +48,11 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
-            builder.setMaxStreams(5);
+            builder.setMaxStreams(10);
             soundPool = builder.build();
         }
         else{
+            //noinspection deprecation
             soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         }
 
@@ -100,6 +104,8 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     {
         if(option == 0)
         {
+            Button button = (Button)findViewById(R.id.showGameList_btn);
+            button.setEnabled(true);
             Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
         }
     }

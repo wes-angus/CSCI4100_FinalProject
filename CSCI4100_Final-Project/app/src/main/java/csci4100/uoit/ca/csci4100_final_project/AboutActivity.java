@@ -1,5 +1,6 @@
 package csci4100.uoit.ca.csci4100_final_project;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Activity;
@@ -14,19 +15,10 @@ public class AboutActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        //setTheme(android.R.style.Theme_DeviceDefault_Light);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-//        String str = getString(R.string.about_txt);
-//        int i_index = str.indexOf("\n");
-//        int b_index1_start = str.indexOf(":") + 1;
-//        int b_index1_end = str.indexOf("\n", b_index1_start);
-//        int b_index2 = str.indexOf(":", b_index1_end) + 1;
-//        str = str.replace("*", "");
-//        SpannableString text = new SpannableString(str);
-//        text.setSpan(new StyleSpan(Typeface.ITALIC), 0, i_index, 0);
-//        text.setSpan(new StyleSpan(Typeface.BOLD), b_index1_start, b_index1_end, 0);
-//        text.setSpan(new StyleSpan(Typeface.BOLD), b_index2, text.length(), 0);
         AboutBuilder aboutBuilder = new AboutBuilder();
         aboutBuilder.addSoundRefs(R.array.sounds_reference_arrays,R.integer.sound_ref_count);
         CharSequence text = aboutBuilder.build();
@@ -50,6 +42,8 @@ public class AboutActivity extends Activity
                     getString(R.string.reference_feed_url)));
         }
 
+        //
+        @SuppressLint("StringFormatMatches")
         public AboutBuilder addSoundRefs(int soundsRefArray, int soundRefCountResource) {
             Resources resources = getResources();
             String[] soundArr = resources.getStringArray(soundsRefArray);

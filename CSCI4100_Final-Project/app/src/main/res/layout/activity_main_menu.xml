@@ -11,6 +11,7 @@
         android:text="@string/show_game_list"
         android:id="@+id/showGameList_btn"
         android:onClick="showGameList"
+        android:enabled="false"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
