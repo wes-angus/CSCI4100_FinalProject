@@ -11,6 +11,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+/*
+TODO: Implement "bought" checkbox to move games that are checked to a separate List(Set)
+TODO: Add more "whenWillBuy" values + add one that removes the game immediately from the database
+*/
 public class GameDetailAndModifyActivity extends Activity
 {
     Game game;

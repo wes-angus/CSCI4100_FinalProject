@@ -21,6 +21,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+TODO: Add boolean to make sure the downloading + adding games to the database only happens once
+TODO: Add activity for looking at a list of already bought games
+TODO: (with possibly manual adding of user-specified titles)
+*/
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
     private static final String url = "http://www.gamespot.com/feeds/new_releases/";

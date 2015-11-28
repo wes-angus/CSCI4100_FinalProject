@@ -19,7 +19,7 @@
     <string name="title">Title:</string>
     <string name="rDate">Release Date:</string>
     <string name="description">Description:</string>
-    <string name="more_info">Click for More Information</string>
+    <string name="more_info">More Info (Link)</string>
     <string name="reset">Reset</string>
     <string name="item_click_instructions">Click on entry for more information,
         as well as to state when you are planning to purchase it.</string>
@@ -39,6 +39,7 @@
         link: &lt;a href=\"%3$s\">%3$s&lt;/a>&lt;/p>&lt;/p></string>
     <string name="reference_feed_site">GameSpot.com</string>
     <string name="reference_feed_url">gamespot.com/feeds/new-releases/</string>
+    <string name="bought">Bought</string>
 
     <string-array name="sounds_reference_arrays">
         <!--sound_site--><item>freesound.org</item><!--sound_user--><item>bubaproducer</item>

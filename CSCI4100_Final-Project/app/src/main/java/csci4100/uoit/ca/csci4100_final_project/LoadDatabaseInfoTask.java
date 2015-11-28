@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 
 import java.util.ArrayList;
 
+//TODO: Sort list of games from the database
+//TODO: Add checks for recently removed/bought games so they aren't re-added to the database
 public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game>>
 {
     private DatabaseListener listener = null;

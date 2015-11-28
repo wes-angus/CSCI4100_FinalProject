@@ -1,3 +1,5 @@
+//Authors: Wesley Angus & Montgomery Alban
+
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.annotation.SuppressLint;
