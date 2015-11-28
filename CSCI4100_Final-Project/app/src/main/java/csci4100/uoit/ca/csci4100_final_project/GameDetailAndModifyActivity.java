@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -79,12 +80,31 @@ public class GameDetailAndModifyActivity extends Activity
 
     public void saveWillBuyProperty(View view)
     {
-        Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
-        intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
-        intent.putExtra("game_position", getIntent().getIntExtra("game_position", 0));
-        setResult(Activity.RESULT_OK, intent);
-        MainMenuActivity.playSound(MainMenuActivity.saveSound_ID);
-        finish();
+        String[] whenWillBuyValues = getResources().getStringArray(R.array.options);
+        String neverWillBuy = whenWillBuyValues[whenWillBuyValues.length - 1];
+        if(spinner.getSelectedItem().toString().equals(neverWillBuy))
+        {
+            Intent c_intent1 = new Intent(this, PopupDialogActivity.class);
+            c_intent1.putExtra("already_bought", false);
+        }
+        else
+        {
+            CheckBox checkBox = (CheckBox) findViewById(R.id.cBox_bought);
+            if (checkBox.isChecked())
+            {
+                Intent c_intent2 = new Intent(this, PopupDialogActivity.class);
+                c_intent2.putExtra("already_bought", true);
+            }
+            else
+            {
+                Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
+                intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
+                intent.putExtra("game_position", getIntent().getIntExtra("game_position", 0));
+                setResult(Activity.RESULT_OK, intent);
+                MainMenuActivity.playSound(MainMenuActivity.saveSound_ID);
+                finish();
+            }
+        }
     }
 
     public void cancelModify(View view)

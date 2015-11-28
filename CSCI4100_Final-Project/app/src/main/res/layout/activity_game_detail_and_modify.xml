@@ -46,7 +46,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/rDate"
         android:id="@+id/rDate_label"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/title_txt"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -57,7 +57,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/description"
         android:id="@+id/desc_label"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/rDate_txt"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/willBuy_spinner"
         android:layout_below="@+id/willBuy_tView"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="6dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:text="@string/will_buy"
         android:id="@+id/willBuy_tView"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/desc_scrollView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -133,12 +133,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/bought"
-        android:id="@+id/cBox"
-        android:layout_marginTop="7dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginEnd="20dp"
+        android:id="@+id/cBox_bought"
         android:layout_below="@+id/willBuy_spinner"
-        android:layout_toLeftOf="@+id/cancelBtn"
-        android:layout_toStartOf="@+id/cancelBtn" />
+        android:layout_toRightOf="@+id/linkBtn"
+        android:layout_toEndOf="@+id/linkBtn"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/calendar_add"
+        android:id="@+id/addEventBtn"
+        android:layout_marginRight="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_alignBottom="@+id/cBox_bought"
+        android:layout_toLeftOf="@+id/linkBtn"
+        android:layout_toStartOf="@+id/linkBtn" />
 
 </RelativeLayout>

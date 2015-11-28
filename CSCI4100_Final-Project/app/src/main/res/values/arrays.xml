@@ -6,6 +6,9 @@
         <item>On Release Date</item>
         <item>When I Have the Money</item>
         <item>When It Goes on Sale</item>
+        <item>Will Borrow/Rent It</item>
+        <item>Probably Not Buying It</item>
         <item>Not Planning to Buy It</item>
+        <item>Never Will Buy It</item>
     </string-array>
 </resources>

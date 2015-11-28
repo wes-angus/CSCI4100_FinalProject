@@ -81,7 +81,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             if(soundPool == null)
             {
                 soundPool = builder.build();
-                setsoundLoadedListener();
+                setSoundLoadedListener();
             }
         }
         else
@@ -90,7 +90,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             {
                 //noinspection deprecation
                 soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-                setsoundLoadedListener();
+                setSoundLoadedListener();
             }
         }
 
@@ -120,7 +120,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         }
     }
 
-    private void setsoundLoadedListener()
+    private void setSoundLoadedListener()
     {
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener()
         {
