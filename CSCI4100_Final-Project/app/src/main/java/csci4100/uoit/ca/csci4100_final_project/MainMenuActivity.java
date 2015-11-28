@@ -25,7 +25,11 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 {
     private static final String url = "http://www.gamespot.com/feeds/new_releases/";
     public static SoundPool soundPool;
-    public static int sound1_ID = -1;
+    public static int buttonSound1_ID = -1;
+    public static int buttonSound2_ID = -1;
+    public static int cancelSound_ID = -1;
+    public static int saveSound_ID = -1;
+    public static int itemClickSound_ID = -1;
 
     @Override
     //@SuppressLint("NewApi")
@@ -39,8 +43,12 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         task.execute(url);
 
         AssetManager assetManager = this.getAssets();
-        AssetFileDescriptor fd;
 
+        AssetFileDescriptor fd1;
+        AssetFileDescriptor fd2;
+        AssetFileDescriptor fd3;
+        AssetFileDescriptor fd4;
+        AssetFileDescriptor fd5;
 
         if((android.os.Build.VERSION.SDK_INT) >= 21){ // Checked sdk value, not an error
             SoundPool.Builder builder = new SoundPool.Builder();
@@ -58,13 +66,30 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         try
         {
-            fd = assetManager.openFd("retro_beep.wav");
-            sound1_ID = soundPool.load(fd, 0);
+            fd1 = assetManager.openFd("retro_beep.wav");
+            fd2 = assetManager.openFd("laser-shot-silenced.wav");
+            fd3 = assetManager.openFd("cancel_click.ogg");
+            fd4 = assetManager.openFd("menusel.wav");
+            fd5 = assetManager.openFd("item_beep.wav");
+
+            buttonSound1_ID = soundPool.load(fd1, 0);
+            buttonSound2_ID = soundPool.load(fd2, 1);
+            cancelSound_ID = soundPool.load(fd3, 2);
+            saveSound_ID = soundPool.load(fd4, 3);
+            itemClickSound_ID = soundPool.load(fd5, 4);
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+
+        soundPool.release();
     }
 
     @Override
@@ -113,14 +138,14 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public void showGameList(View view)
     {
         Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
-        soundPool.play(sound1_ID, 1, 1, 0, 0, 1);
+        soundPool.play(buttonSound2_ID, 1, 1, 1, 0, 1);
         startActivity(intent);
     }
 
     public void viewAboutText(View view)
     {
         Intent intent = new Intent(this, AboutActivity.class);
-        soundPool.play(sound1_ID, 1, 1, 0, 0, 1);
+        soundPool.play(buttonSound1_ID, 1, 1, 0, 0, 1);
         startActivity(intent);
     }
 }

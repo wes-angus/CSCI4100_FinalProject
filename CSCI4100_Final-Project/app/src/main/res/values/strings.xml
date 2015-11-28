@@ -37,6 +37,9 @@
     <string name="sound_reference">&lt;p>The sound file \"%4$s\" was taken from user \"%2$s\"
         on &lt;i>%3$s&lt;/i>, and is being used under the Creative Commons Attribution 3.0 license.&lt;p>
         link: &lt;a href=\"%3$s\">%3$s&lt;/a>&lt;/p>&lt;/p></string>
+    <string name="sound_reference_2">The sound file \"menusel.wav\" was taken from user \"RunnerPack\"
+        on freesound.org, and is being used under the Creative Commons Attribution 3.0 license.\n
+        link: https://www.freesound.org/people/RunnerPack/sounds/87035/\n\n</string>
     <string name="reference_feed_site">GameSpot.com</string>
     <string name="reference_feed_url">gamespot.com/feeds/new-releases/</string>
 

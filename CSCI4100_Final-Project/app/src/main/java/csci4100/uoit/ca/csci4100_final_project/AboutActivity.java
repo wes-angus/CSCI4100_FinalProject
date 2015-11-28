@@ -18,17 +18,18 @@ public class AboutActivity extends Activity
         //setTheme(android.R.style.Theme_DeviceDefault_Light);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-
-        AboutBuilder aboutBuilder = new AboutBuilder();
+        
+                AboutBuilder aboutBuilder = new AboutBuilder();
         aboutBuilder.addSoundRefs(R.array.sounds_reference_arrays,R.integer.sound_ref_count);
         CharSequence text = aboutBuilder.build();
+
         TextView textView = (TextView) findViewById(R.id.about_tView);
         textView.setText(text, TextView.BufferType.SPANNABLE);
     }
 
     public void backToMenu(View view)
     {
-        MainMenuActivity.soundPool.play(MainMenuActivity.sound1_ID, 1, 1, 0, 0, 1);
+        MainMenuActivity.soundPool.play(MainMenuActivity.buttonSound1_ID, 1, 1, 0, 0, 1);
         finish();
     }
 
@@ -41,6 +42,7 @@ public class AboutActivity extends Activity
             sounds.append(String.format(base, getString(R.string.reference_feed_site),
                     getString(R.string.reference_feed_url)));
         }
+
 
         //
         @SuppressLint("StringFormatMatches")
