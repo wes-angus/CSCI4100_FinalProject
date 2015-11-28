@@ -23,6 +23,15 @@
         android:onClick="viewAboutText"
         android:layout_below="@+id/showGameList_btn"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="36dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Bought List"
+        android:id="@+id/boughtBtn"
+        android:layout_above="@+id/showGameList_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp" />
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-//Authors: Wesley Angus
+//Authors: Wesley Angus & Montgomery Alban
 
 package csci4100.uoit.ca.csci4100_final_project;
 
@@ -7,10 +7,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +21,9 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
 TODO: Add boolean to make sure the downloading + adding games to the database only happens once
@@ -28,24 +32,33 @@ TODO: (with possibly manual adding of user-specified titles)
 */
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
-    private static final String url = "http://www.gamespot.com/feeds/new_releases/";
-    public static SoundPool soundPool;
+    private static String url = "";
+    private static SoundPool soundPool = null;
     public static int buttonSound1_ID = -1;
     public static int buttonSound2_ID = -1;
     public static int cancelSound_ID = -1;
     public static int saveSound_ID = -1;
     public static int itemClickSound_ID = -1;
+    private static Map<Integer, Boolean> soundLoaded;
+    private boolean added = false;
 
+    @SuppressLint("NewApi")
     @Override
-    //@SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        //Parses the new game releases feed in an AsyncTask
-        DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
-        task.execute(url);
+        if(url.isEmpty())
+        {
+            url = "http://www." + getString(R.string.reference_feed_url);
+        }
+        if(!added)
+        {
+            //Parses the new game releases feed in an AsyncTask
+            DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
+            task.execute(url);
+        }
 
         AssetManager assetManager = this.getAssets();
 
@@ -55,38 +68,93 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         AssetFileDescriptor fd4;
         AssetFileDescriptor fd5;
 
-        if((android.os.Build.VERSION.SDK_INT) >= 21){ // Checked sdk value, not an error
+        soundLoaded = new HashMap<>();
+
+        if((android.os.Build.VERSION.SDK_INT) >= 21) // Checked sdk value, not an error
+        {
             SoundPool.Builder builder = new SoundPool.Builder();
             builder.setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
-            builder.setMaxStreams(10);
-            soundPool = builder.build();
+            builder.setMaxStreams(5);
+            if(soundPool == null)
+            {
+                soundPool = builder.build();
+                setsoundLoadedListener();
+            }
         }
-        else{
-            //noinspection deprecation
-            soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        else
+        {
+            if(soundPool == null)
+            {
+                //noinspection deprecation
+                soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+                setsoundLoadedListener();
+            }
         }
 
         try
         {
             fd1 = assetManager.openFd("retro_beep.wav");
             fd2 = assetManager.openFd("laser-shot-silenced.wav");
-            fd3 = assetManager.openFd("cancel_click.ogg");
-            fd4 = assetManager.openFd("menusel.wav");
-            fd5 = assetManager.openFd("item_beep.wav");
+            fd3 = assetManager.openFd("item_beep.wav");
+            fd4 = assetManager.openFd("cancel_click.ogg");
+            fd5 = assetManager.openFd("menusel.wav");
 
-            buttonSound1_ID = soundPool.load(fd1, 0);
+            buttonSound1_ID = soundPool.load(fd1, 1);
             buttonSound2_ID = soundPool.load(fd2, 1);
-            cancelSound_ID = soundPool.load(fd3, 2);
-            saveSound_ID = soundPool.load(fd4, 3);
-            itemClickSound_ID = soundPool.load(fd5, 4);
+            itemClickSound_ID = soundPool.load(fd3, 1);
+            cancelSound_ID = soundPool.load(fd4, 1);
+            saveSound_ID = soundPool.load(fd5, 1);
+
+            soundLoaded.put(buttonSound1_ID, false);
+            soundLoaded.put(buttonSound2_ID, false);
+            soundLoaded.put(itemClickSound_ID, false);
+            soundLoaded.put(cancelSound_ID, false);
+            soundLoaded.put(saveSound_ID, false);
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    private void setsoundLoadedListener()
+    {
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener()
+        {
+            //Only play sound after it has loaded
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status)
+            {
+                if(sampleId == buttonSound1_ID)
+                {
+                    soundLoaded.put(buttonSound1_ID, true);
+                    Log.i("SoundLoaded", "Button Sound 1 loaded!");
+                }
+                else if(sampleId == buttonSound2_ID)
+                {
+                    soundLoaded.put(buttonSound2_ID, true);
+                    Log.i("SoundLoaded", "Button Sound 2 loaded!");
+                }
+                else if(sampleId == itemClickSound_ID)
+                {
+                    soundLoaded.put(itemClickSound_ID, true);
+                    Log.i("SoundLoaded", "Item Click Sound loaded!");
+                }
+                else if(sampleId == cancelSound_ID)
+                {
+                    soundLoaded.put(cancelSound_ID, true);
+                    Log.i("SoundLoaded", "Cancel Sound loaded!");
+                }
+                else if(sampleId == saveSound_ID)
+                {
+                    soundLoaded.put(saveSound_ID, true);
+                    Log.i("SoundLoaded", "Save Sound loaded!");
+                }
+            }
+        });
     }
 
     @Override
@@ -95,6 +163,15 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         super.onDestroy();
 
         soundPool.release();
+        soundPool = null;
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+
+
     }
 
     @Override
@@ -137,20 +214,31 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             Button button = (Button)findViewById(R.id.showGameList_btn);
             button.setEnabled(true);
             Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
+            added = true;
+        }
+    }
+
+    public static void playSound(int soundID)
+    {
+        if(soundLoaded.get(soundID))
+        {
+            soundPool.play(soundID, 1, 1, 1, 0, 1);
         }
     }
 
     public void showGameList(View view)
     {
         Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
-        soundPool.play(buttonSound2_ID, 1, 1, 1, 0, 1);
+        playSound(buttonSound2_ID);
         startActivity(intent);
     }
+
+
 
     public void viewAboutText(View view)
     {
         Intent intent = new Intent(this, AboutActivity.class);
-        soundPool.play(buttonSound1_ID, 1, 1, 0, 0, 1);
+        playSound(buttonSound1_ID);
         startActivity(intent);
     }
 }

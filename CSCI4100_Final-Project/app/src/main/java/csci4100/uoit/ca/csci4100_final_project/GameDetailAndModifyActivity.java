@@ -83,14 +83,14 @@ public class GameDetailAndModifyActivity extends Activity
         intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
         intent.putExtra("game_position", getIntent().getIntExtra("game_position", 0));
         setResult(Activity.RESULT_OK, intent);
-        MainMenuActivity.soundPool.play(MainMenuActivity.saveSound_ID, 1, 1, 3, 0, 1);
+        MainMenuActivity.playSound(MainMenuActivity.saveSound_ID);
         finish();
     }
 
     public void cancelModify(View view)
     {
         setResult(Activity.RESULT_CANCELED);
-        MainMenuActivity.soundPool.play(MainMenuActivity.cancelSound_ID, 1, 1, 2, 0, 1);
+        MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
         finish();
     }
 
@@ -98,7 +98,7 @@ public class GameDetailAndModifyActivity extends Activity
     {
         String url = game.getLink();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        MainMenuActivity.soundPool.play(MainMenuActivity.buttonSound1_ID, 1, 1, 0, 0, 1);
+        MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
         startActivity(intent);
     }
 }

@@ -15,7 +15,7 @@
     <string name="mod_success">New Game List updated successfully!</string>
     <string name="games_added">New Game Releases added to database!</string>
     <string name="games_downloaded">New Game Releases parsed + downloaded!</string>
-    <string name="about">About</string>
+    <string name="about">About the App</string>
     <string name="title">Title:</string>
     <string name="rDate">Release Date:</string>
     <string name="description">Description:</string>
@@ -38,7 +38,7 @@
         on &lt;i>%3$s&lt;/i>, and is being used under the Creative Commons Attribution 3.0 license.&lt;p>
         link: &lt;a href=\"%3$s\">%3$s&lt;/a>&lt;/p>&lt;/p></string>
     <string name="reference_feed_site">GameSpot.com</string>
-    <string name="reference_feed_url">gamespot.com/feeds/new-releases/</string>
+    <string name="reference_feed_url">gamespot.com/feeds/new-games/</string>
     <string name="bought">Bought</string>
 
     <string-array name="sounds_reference_arrays">

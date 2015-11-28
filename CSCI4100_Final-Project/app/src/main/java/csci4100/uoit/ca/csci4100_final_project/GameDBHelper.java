@@ -67,7 +67,8 @@ public class GameDBHelper extends SQLiteOpenHelper
         SQLiteDatabase database = this.getWritableDatabase();
 
         // retrieve the game from the database
-        String[] columns = new String[] { "title", "releaseDate", "description", "link", "whenWillBuy" };
+        String[] columns = new String[] { "title", "releaseDate", "description", "link",
+                "whenWillBuy" };
         String whereClause = "title = ?";
         String[] whereArgs = new String[]{ title };
         Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", "");
@@ -89,7 +90,8 @@ public class GameDBHelper extends SQLiteOpenHelper
         //Get a connection to the database
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] columns = new String[] { "title", "releaseDate", "description", "link", "whenWillBuy" };
+        String[] columns = new String[] { "title", "releaseDate", "description", "link",
+                "whenWillBuy" };
         Cursor cursor = database.query(TABLE_NAME, columns, "", new String[]{}, "", "", "");
         cursor.moveToFirst();
         //Continue adding games to the list while more are found
@@ -128,9 +130,25 @@ public class GameDBHelper extends SQLiteOpenHelper
         String[] whereArgs = new String[]{ game.getTitle() };
         int numRowsAffected = database.update(TABLE_NAME, values, whereClause, whereArgs);
 
-        Log.i("DatabaseAccess", "updateGame(" + game.getTitle() + "):  numRowsAffected: " + numRowsAffected);
+        Log.i("DatabaseAccess", "updateGame(" + game.getTitle() + "):  numRowsAffected: " +
+                numRowsAffected);
 
         // verify that the game was updated successfully
+        return (numRowsAffected == 1);
+    }
+
+    //Delete a game from the database
+    public boolean deleteGame(String title)
+    {
+        //Get a connection to the database
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        //Delete the game with the given gameId from the database
+        int numRowsAffected = database.delete(TABLE_NAME, "title = ?", new String[]{ title });
+
+        Log.i("DatabaseAccess", "deleteGame(" + title + "):  numRowsAffected: " + numRowsAffected);
+
+        //Check if the game was deleted successfully
         return (numRowsAffected == 1);
     }
 }

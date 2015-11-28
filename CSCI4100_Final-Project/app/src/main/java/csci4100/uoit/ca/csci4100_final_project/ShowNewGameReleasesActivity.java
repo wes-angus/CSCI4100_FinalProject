@@ -3,13 +3,9 @@
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -142,13 +138,13 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         gamesBundle.putParcelable("game", games.get(gamePosition));
         intent.putExtras(gamesBundle);
         intent.putExtra("game_position", gamePosition);
-        MainMenuActivity.soundPool.play(MainMenuActivity.itemClickSound_ID, 1, 1, 4, 0, 1);
+        MainMenuActivity.playSound(MainMenuActivity.itemClickSound_ID);
         startActivityForResult(intent, MODIFY_GAME);
     }
 
     public void backToMenu(View view)
     {
-        MainMenuActivity.soundPool.play(MainMenuActivity.buttonSound1_ID, 1, 1, 0, 0, 1);
+        MainMenuActivity.playSound(MainMenuActivity.buttonSound1_ID);
         finish();
     }
 

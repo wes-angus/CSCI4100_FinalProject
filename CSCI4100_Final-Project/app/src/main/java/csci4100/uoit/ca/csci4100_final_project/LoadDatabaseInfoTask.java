@@ -27,7 +27,8 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game
     {
         /*
         This variable determines which database function to use
-        0 = Add multiple games, 1 = get the list of games only, 2 = Update the given game
+        0 = Add multiple games, 1 = get the list of games only, 2 = Update the given game,
+        3 = Remove the given game from the database
         */
         option = (short) params[0];
         ArrayList<Game> games = new ArrayList<>();
@@ -39,7 +40,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game
                 games = (ArrayList<Game>) params[1];
             }
         }
-        else if(option == 2)
+        else if(option == 2 || option == 3)
         {
             singleGame = (Game) params[1];
         }
@@ -57,6 +58,10 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game
                 break;
             case 2:
                 updateGame(singleGame);
+                games = getGames();
+                break;
+            case 3:
+                deleteGame(singleGame);
                 games = getGames();
                 break;
         }
@@ -80,6 +85,11 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game
     private ArrayList<Game> getGames()
     {
         return dbHelper.getAllGames();
+    }
+
+    private void deleteGame(Game game)
+    {
+        dbHelper.deleteGame(game.getTitle());
     }
 
     @Override
