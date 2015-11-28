@@ -9,12 +9,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="csci4100.uoit.ca.csci4100_final_project.AboutActivity">
 
-    <TextView
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/about_txt"
-        android:id="@+id/about_tView"
-        android:layout_alignParentEnd="true" />
+        android:id="@+id/scrollView"
+        android:layout_above="@+id/closeBtn"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_txt"
+            android:id="@+id/about_tView"
+            android:layout_gravity="top" />
+    </ScrollView>
 
     <Button
         android:layout_width="wrap_content"
@@ -24,5 +35,6 @@
         android:onClick="backToMenu"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="33dp" />
+        android:layout_marginBottom="20dp" />
+
 </RelativeLayout>

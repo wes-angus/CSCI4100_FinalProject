@@ -32,7 +32,7 @@ public class GameDetailAndModifyActivity extends Activity
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState)
+    public void onSaveInstanceState(Bundle savedInstanceState )
     {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
