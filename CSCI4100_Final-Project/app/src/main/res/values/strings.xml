@@ -26,19 +26,25 @@
     <string name="will_i_buy">I am planning to purchase this item:</string>
     <string name="title_activity_about">About</string>
     <string name="about_txt" >
-        This application was co-created by Wesley Angus and Montgomery Alban for a final project in
-        the CSCI 4100 course at UOIT (also known as Mobile Devices).\n\n
-        This is an application that lets you view and manage a list of upcoming video games,
-        as well as when you are planning to purchase each game (if at all).\n\n
-        The RSS Feed used in this application is taken from one of the free feeds available from
-        GameSpot.com, specifically the list of upcoming releases at:
-        gamespot.com/feeds/new-releases/.\n\n
-        All of the sounds used in this application were free sounds taken from freesound.org.\n\n
-        The sound file \"laser-shot-silenced.wav\" was taken from user \"bubaproducer\"
-        on freesound.org, and is being used under the Creative Commons Attribution 3.0 license.\n
-        link: https://www.freesound.org/people/bubaproducer/sounds/151022/\n\n
-        The sound file \"menusel.wav\" was taken from user \"RunnerPack\"
-        on freesound.org, and is being used under the Creative Commons Attribution 3.0 license.\n
-        link: https://www.freesound.org/people/bubaproducer/sounds/151022/\n\n
+        &lt;p>&lt;i>This application was co-created by Wesley Angus and Montgomery Alban for a final project in
+        the CSCI 4100 course at UOIT (also known as Mobile Devices).&lt;/i>&lt;/p>
+        &lt;p>This is an application that lets you view and manage a list of upcoming video games,
+        as well as when you are planning to purchase each game (if at all).&lt;/p>
+        &lt;p>The RSS Feed used in this application is taken from one of the free feeds available from
+        &lt;i>%1$s&lt;/i>, specifically the list of upcoming releases at:
+        &lt;a href=\"%2$s\">&lt;i>%2$s&lt;/i>&lt;/a>.&lt;/p>
     </string>
+    <string name="sound_reference">&lt;p>The sound file \"%4$s\" was taken from user \"%2$s\"
+        on &lt;i>%3$s&lt;/i>, and is being used under the Creative Commons Attribution 3.0 license.&lt;p>
+        link: &lt;a href=\"%3$s\">%3$s&lt;/a>&lt;/p>&lt;/p></string>
+    <string name="sound_reference_2">The sound file \"menusel.wav\" was taken from user \"RunnerPack\"
+        on freesound.org, and is being used under the Creative Commons Attribution 3.0 license.\n
+        link: https://www.freesound.org/people/RunnerPack/sounds/87035/\n\n</string>
+    <string name="reference_feed_site">GameSpot.com</string>
+    <string name="reference_feed_url">gamespot.com/feeds/new-releases/</string>
+
+    <string-array name="sounds_reference_arrays">
+        <!--sound_site--><item>freesound.org</item><!--sound_user--><item>bubaproducer</item>
+            <!--sound_location--><item>https://www.freesound.org/people/bubaproducer/sounds/151022/</item><!--sound_name--><item>bubaproducer__laser-shot-silenced.wav</item>
+    </string-array>
 </resources>
