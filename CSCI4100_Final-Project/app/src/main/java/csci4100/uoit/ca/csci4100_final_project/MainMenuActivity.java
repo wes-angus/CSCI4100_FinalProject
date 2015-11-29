@@ -20,9 +20,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
 TODO: Add activity for looking at a list of already bought games
@@ -40,7 +43,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public static int itemClickSound_ID = -1;
     private static Map<Integer, Boolean> soundLoaded;
     private boolean added = false;
-    private List<Game> downloadedGames;
+    private Set<String> downloadedGames;
 
     @SuppressLint("NewApi")
     @Override
@@ -220,7 +223,11 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public void setGames(final List<Game> data)
     {
         Toast.makeText(this, R.string.games_downloaded, Toast.LENGTH_SHORT).show();
-        downloadedGames = data;
+        downloadedGames = new HashSet<>();
+        for (Game downloadedGame : data)
+        {
+            downloadedGames.add(downloadedGame.getTitle());
+        }
 
         //Adds the list of games to the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
@@ -232,17 +239,29 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     {
         if(option == 0)
         {
-            /*
-            TODO: Add checks for recently removed games so they get removed
-            TODO: from the database once they're no longer in the feed
-            */
             //Get the list of removed games from the database
             LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
             task.execute((short) 5);
         }
         else if(option == 5)
         {
-            if(games.isEmpty())
+            /*
+            TODO: Add checks for recently removed games so they get removed
+            TODO: from the database once they're no longer in the feed
+            */
+            List<Game> gamesToRemove = new ArrayList<>();
+            for (int i = 0; i < games.size(); i++)
+            {
+                if(downloadedGames.contains(games.get(i).getTitle()))
+                {
+                    continue;
+                }
+                else if(i == downloadedGames.size() - 1)
+                {
+                    gamesToRemove.add(games.get(i));
+                }
+            }
+            if(gamesToRemove.isEmpty())
             {
                 Button button = (Button) findViewById(R.id.showGameList_btn);
                 button.setEnabled(true);
@@ -253,7 +272,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             {
                 //Remove the old removed games from the database
                 LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                task.execute((short) 3, games);
+                task.execute((short) 3, gamesToRemove);
             }
         }
         else if(option == 3)
