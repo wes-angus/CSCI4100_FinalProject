@@ -13,15 +13,19 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-//TODO: Sort list of games from the database
+//TODO: Get list of unlikely to buy games whose release dates are a week past
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
     public static final int MODIFY_GAME = 10;
     public static final String L_VIEW_STATE = "listView_prevState";
-    ArrayList<Game> games = new ArrayList<>();
+    List<Game> games = new ArrayList<>();
     ListView listView;
     private Parcelable listView_state = null;
     int scrollPos = 0;
@@ -95,34 +99,15 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     }
 
     @Override
-    public void syncGames(final ArrayList<Game> games, short option)
+    public void syncGames(final List<Game> games, short option)
     {
         if(option > 0 && option < 4)
         {
             if(!(games.isEmpty()))
             {
-                /*
-                Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy");
-                Date curDate = calendar.getTime();
-                try
-                {
-                    Date date = dateFormat.parse(gameDate);
-                    long diffTime = curDate.getTime() - date.getTime();
-                    long diffDays = diffTime / (1000 * 60 * 60 * 24);
-                    if(diffDays > 7)
-                    {
-                        i.remove();
-                        removedGameDates.remove(game);
-                    }
-                }
-                catch (ParseException e)
-                {
-                    e.printStackTrace();
-                }
-                */
+                //TODO: Remove games that've expired from the database
+                //getExpiredGames();
 
-                listView = (ListView) findViewById(R.id.game_listView);
                 populateList(listView, games);
 
                 this.games = games;
@@ -159,6 +144,37 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         listView.setAdapter(new GameAdapter(this, data));
     }
 
+    private List<Game> getExpiredGames()
+    {
+        List<Game> expiredGames = new ArrayList<>();
+        /*
+        Checks the date for each game in the list of games given to it (the games that
+        the user is unlikely to buy), and if the date is more than a week past, the
+        game is added to a list of games that will be removed from the database
+        */
+        for (Game game : games)
+        {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy");
+            Date curDate = calendar.getTime();
+            try
+            {
+                Date date = dateFormat.parse(game.getReleaseDate());
+                long diffTime = curDate.getTime() - date.getTime();
+                long diffDays = (long) ((double) diffTime / (double)(1000 * 60 * 60 * 24));
+                if(diffDays > 7)
+                {
+                    expiredGames.add(game);
+                }
+            }
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return expiredGames;
+    }
+
     public void goToModifyScreen(int gamePosition)
     {
         Intent intent = new Intent(this, GameDetailAndModifyActivity.class);
@@ -184,31 +200,18 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         {
             if(reqCode == MODIFY_GAME)
             {
-                boolean deleteGame = result.getBooleanExtra("delete_game", false);
                 Game oldGame = games.get(gamePositionToModify);
-                if(!deleteGame)
+                /*
+                Updates the "willBuy" property of the game that was selected in the database
+                and gets the updated list of games to update the ListView.
+                */
+                String new_whenWillBuy = result.getStringExtra("when_will_buy");
+                if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
                 {
-                    /*
-                    Updates the "willBuy" property of the game that was selected in the database
-                    and gets the updated list of games to update the ListView.
-                    */
-                    String new_whenWillBuy = result.getStringExtra("when_will_buy");
-                    if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
-                    {
-                        oldGame.setWhenWillBuy(new_whenWillBuy);
-                        scrollPos = gamePositionToModify;
-                        LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                        task.execute((short) 2, oldGame);
-                    }
-                }
-                else
-                {
-                    /*
-                    Removes the game that was selected from the database
-                    and gets the updated list of games to update the ListView.
-                    */
+                    oldGame.setWhenWillBuy(new_whenWillBuy);
+                    scrollPos = gamePositionToModify;
                     LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                    task.execute((short) 3, oldGame);
+                    task.execute((short) 2, oldGame);
                 }
             }
         }

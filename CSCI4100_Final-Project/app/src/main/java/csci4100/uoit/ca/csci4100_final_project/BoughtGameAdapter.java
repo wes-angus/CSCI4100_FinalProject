@@ -11,12 +11,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BoughtGameAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<String> data;
+    private List<Game> data;
 
-    public BoughtGameAdapter(Context context, ArrayList<String> data) {
+    public BoughtGameAdapter(Context context, List<Game> data) {
         this.data = data;
         this.context = context;
     }
@@ -35,7 +36,7 @@ public class BoughtGameAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        String gameToDisplay = data.get(position);
+        Game gameToDisplay = data.get(position);
 
         Log.d("BoughtGameAdapter", "Game: "+ gameToDisplay);
 
@@ -49,7 +50,7 @@ public class BoughtGameAdapter extends BaseAdapter {
 
         // populate the views with the data from story
         TextView lblTitle = (TextView)convertView.findViewById(R.id.lblBoughtGame);
-        lblTitle.setText(gameToDisplay);
+        lblTitle.setText(gameToDisplay.getTitle());
 
         return convertView;
     }

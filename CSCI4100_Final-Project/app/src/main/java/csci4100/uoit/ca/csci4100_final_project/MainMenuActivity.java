@@ -20,24 +20,13 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /*
-TODO: Add checks for recently removed/bought games so they aren't re-added to the database
 TODO: Add activity for looking at a list of already bought games
 TODO: (with possibly manual adding of user-specified titles)
-TODO: Remove recently removed games whose release date is a week past
 */
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
@@ -51,6 +40,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public static int itemClickSound_ID = -1;
     private static Map<Integer, Boolean> soundLoaded;
     private boolean added = false;
+    private List<Game> downloadedGames;
 
     @SuppressLint("NewApi")
     @Override
@@ -230,6 +220,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public void setGames(final List<Game> data)
     {
         Toast.makeText(this, R.string.games_downloaded, Toast.LENGTH_SHORT).show();
+        downloadedGames = data;
 
         //Adds the list of games to the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
@@ -237,11 +228,37 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     }
 
     @Override
-    public void syncGames(ArrayList<Game> games, short option)
+    public void syncGames(List<Game> games, short option)
     {
         if(option == 0)
         {
-            Button button = (Button)findViewById(R.id.showGameList_btn);
+            /*
+            TODO: Add checks for recently removed games so they get removed
+            TODO: from the database once they're no longer in the feed
+            */
+            //Get the list of removed games from the database
+            LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+            task.execute((short) 5);
+        }
+        else if(option == 5)
+        {
+            if(games.isEmpty())
+            {
+                Button button = (Button) findViewById(R.id.showGameList_btn);
+                button.setEnabled(true);
+                added = true;
+                Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                //Remove the old removed games from the database
+                LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                task.execute((short) 3, games);
+            }
+        }
+        else if(option == 3)
+        {
+            Button button = (Button) findViewById(R.id.showGameList_btn);
             button.setEnabled(true);
             added = true;
             Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();

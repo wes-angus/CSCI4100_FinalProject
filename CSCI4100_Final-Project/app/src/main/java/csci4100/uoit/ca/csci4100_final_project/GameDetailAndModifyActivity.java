@@ -12,10 +12,6 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-/*
-TODO: Implement "bought" checkbox to move games that are checked to a separate List(Set)
-TODO: Removes the game immediately from the database when whenWillBuy value is "Will Never Buy It"
-*/
 public class GameDetailAndModifyActivity extends Activity
 {
     public static final int DELETE_DIALOG = 13;
@@ -134,20 +130,19 @@ public class GameDetailAndModifyActivity extends Activity
     {
         //Gets a result back from PopupDialogActivity
         super.onActivityResult(reqCode, resCode, result);
-        if(bought)
-        {
-            //addBoughtGame(game);
-        }
-        else
-        {
-            //addRecentlyRemovedGame(game);
-        }
         if (resCode == Activity.RESULT_OK)
         {
             if(reqCode == DELETE_DIALOG)
             {
                 Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
-                intent.putExtra("delete_game", true);
+                if(!bought)
+                {
+                    intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
+                }
+                else
+                {
+                    intent.putExtra("when_will_buy", getString(R.string.bought));
+                }
                 setResult(RESULT_OK, intent);
                 finish();
             }
