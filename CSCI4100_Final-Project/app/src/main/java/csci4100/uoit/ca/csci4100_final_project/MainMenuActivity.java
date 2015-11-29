@@ -5,9 +5,9 @@ package csci4100.uoit.ca.csci4100_final_project;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -26,18 +26,18 @@ import java.util.List;
 import java.util.Map;
 
 /*
-TODO: Add boolean to make sure the downloading + adding games to the database only happens once
 TODO: Add activity for looking at a list of already bought games
 TODO: (with possibly manual adding of user-specified titles)
 */
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
-    private static String url = "";
+    private static final String prefs_filename = "loadOnce";
+    private String url = "";
     private static SoundPool soundPool = null;
     public static int buttonSound1_ID = -1;
     public static int buttonSound2_ID = -1;
     public static int cancelSound_ID = -1;
-    public static int saveSound_ID = -1;
+    public static int confirmSound_ID = -1;
     public static int itemClickSound_ID = -1;
     private static Map<Integer, Boolean> soundLoaded;
     private boolean added = false;
@@ -106,13 +106,13 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             buttonSound2_ID = soundPool.load(fd2, 1);
             itemClickSound_ID = soundPool.load(fd3, 1);
             cancelSound_ID = soundPool.load(fd4, 1);
-            saveSound_ID = soundPool.load(fd5, 1);
+            confirmSound_ID = soundPool.load(fd5, 1);
 
             soundLoaded.put(buttonSound1_ID, false);
             soundLoaded.put(buttonSound2_ID, false);
             soundLoaded.put(itemClickSound_ID, false);
             soundLoaded.put(cancelSound_ID, false);
-            soundLoaded.put(saveSound_ID, false);
+            soundLoaded.put(confirmSound_ID, false);
         }
         catch (IOException e)
         {
@@ -128,33 +128,49 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status)
             {
+                soundLoaded.put(sampleId, true);
                 if(sampleId == buttonSound1_ID)
                 {
-                    soundLoaded.put(buttonSound1_ID, true);
                     Log.i("SoundLoaded", "Button Sound 1 loaded!");
                 }
                 else if(sampleId == buttonSound2_ID)
                 {
-                    soundLoaded.put(buttonSound2_ID, true);
                     Log.i("SoundLoaded", "Button Sound 2 loaded!");
                 }
                 else if(sampleId == itemClickSound_ID)
                 {
-                    soundLoaded.put(itemClickSound_ID, true);
                     Log.i("SoundLoaded", "Item Click Sound loaded!");
                 }
                 else if(sampleId == cancelSound_ID)
                 {
-                    soundLoaded.put(cancelSound_ID, true);
                     Log.i("SoundLoaded", "Cancel Sound loaded!");
                 }
-                else if(sampleId == saveSound_ID)
+                else if(sampleId == confirmSound_ID)
                 {
-                    soundLoaded.put(saveSound_ID, true);
                     Log.i("SoundLoaded", "Save Sound loaded!");
                 }
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState )
+    {
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+
+        // Save the current state of downloading + parsing the new game releases feed
+        savedInstanceState.putBoolean("added", added);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore activity state from saved instance
+        savedInstanceState.getBoolean("added", false);
     }
 
     @Override
@@ -164,6 +180,11 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         soundPool.release();
         soundPool = null;
+
+        SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("added", false);
+        editor.apply();
     }
 
     @Override
@@ -171,7 +192,19 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     {
         super.onPause();
 
+        SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("added", added);
+        editor.apply();
+    }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
+        added = prefs.getBoolean("added", false);
     }
 
     @Override
@@ -213,8 +246,8 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         {
             Button button = (Button)findViewById(R.id.showGameList_btn);
             button.setEnabled(true);
-            Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
             added = true;
+            Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -233,12 +266,15 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         startActivity(intent);
     }
 
-
-
     public void viewAboutText(View view)
     {
         Intent intent = new Intent(this, AboutActivity.class);
         playSound(buttonSound1_ID);
         startActivity(intent);
+    }
+
+    public void viewBoughtList(View view)
+    {
+
     }
 }

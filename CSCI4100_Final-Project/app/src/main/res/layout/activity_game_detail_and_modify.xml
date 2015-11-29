@@ -16,6 +16,8 @@
         android:text="@string/save"
         android:id="@+id/saveBtn"
         android:onClick="saveWillBuyProperty"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -26,6 +28,8 @@
         android:text="@string/cancel"
         android:id="@+id/cancelBtn"
         android:onClick="cancelModify"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/desc_scrollView"
         android:layout_alignEnd="@+id/desc_scrollView" />
@@ -134,6 +138,7 @@
         android:layout_height="wrap_content"
         android:text="@string/bought"
         android:id="@+id/cBox_bought"
+        android:layout_marginTop="8dp"
         android:layout_below="@+id/willBuy_spinner"
         android:layout_toRightOf="@+id/linkBtn"
         android:layout_toEndOf="@+id/linkBtn"
@@ -144,11 +149,12 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:text="@string/calendar_add"
         android:id="@+id/addEventBtn"
-        android:layout_marginRight="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_alignBottom="@+id/cBox_bought"
+        android:layout_marginRight="29dp"
+        android:layout_marginEnd="29dp"
+        android:layout_alignTop="@+id/cBox_bought"
         android:layout_toLeftOf="@+id/linkBtn"
         android:layout_toStartOf="@+id/linkBtn" />
 

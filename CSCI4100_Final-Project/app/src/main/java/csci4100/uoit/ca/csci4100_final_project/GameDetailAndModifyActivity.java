@@ -14,12 +14,15 @@ import android.widget.TextView;
 
 /*
 TODO: Implement "bought" checkbox to move games that are checked to a separate List(Set)
-TODO: Add more "whenWillBuy" values + add one that removes the game immediately from the database
+TODO: Removes the game immediately from the database when whenWillBuy value is "Will Never Buy It"
 */
 public class GameDetailAndModifyActivity extends Activity
 {
+    public static final int DELETE_DIALOG = 13;
+
     Game game;
     Spinner spinner;
+    boolean already_bought = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -85,7 +88,8 @@ public class GameDetailAndModifyActivity extends Activity
         if(spinner.getSelectedItem().toString().equals(neverWillBuy))
         {
             Intent c_intent1 = new Intent(this, PopupDialogActivity.class);
-            c_intent1.putExtra("already_bought", false);
+            already_bought = false;
+            //startActivityForResult(c_intent1, DELETE_DIALOG);
         }
         else
         {
@@ -93,15 +97,15 @@ public class GameDetailAndModifyActivity extends Activity
             if (checkBox.isChecked())
             {
                 Intent c_intent2 = new Intent(this, PopupDialogActivity.class);
-                c_intent2.putExtra("already_bought", true);
+                already_bought = true;
+                //startActivityForResult(c_intent2, DELETE_DIALOG);
             }
             else
             {
                 Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
                 intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
-                intent.putExtra("game_position", getIntent().getIntExtra("game_position", 0));
                 setResult(Activity.RESULT_OK, intent);
-                MainMenuActivity.playSound(MainMenuActivity.saveSound_ID);
+                MainMenuActivity.playSound(MainMenuActivity.confirmSound_ID);
                 finish();
             }
         }

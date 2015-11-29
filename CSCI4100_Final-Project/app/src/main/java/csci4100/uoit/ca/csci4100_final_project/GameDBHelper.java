@@ -11,7 +11,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-//TODO: add deleteGame method
 public class GameDBHelper extends SQLiteOpenHelper
 {
     public static final int DATABASE_VERSION = 2;

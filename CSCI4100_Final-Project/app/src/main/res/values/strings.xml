@@ -16,7 +16,7 @@
     <string name="title">Title:</string>
     <string name="rDate">Release Date:</string>
     <string name="description">Description:</string>
-    <string name="more_info">More Info (Link)</string>
+    <string name="more_info">More Info</string>
     <string name="reset">Reset</string>
     <string name="item_click_instructions">Click on entry for more information,
         as well as to state when you are planning to purchase it.</string>
@@ -64,4 +64,5 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="calendar_add">Add To\nCalendar</string>
+    <string name="bought_btn_txt">View Bought List</string>
 </resources>

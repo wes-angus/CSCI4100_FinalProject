@@ -24,6 +24,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     ListView listView;
     private Parcelable listView_state = null;
     int scrollPos = 0;
+    int gamePositionToModify = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -137,7 +138,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         Bundle gamesBundle = new Bundle();
         gamesBundle.putParcelable("game", games.get(gamePosition));
         intent.putExtras(gamesBundle);
-        intent.putExtra("game_position", gamePosition);
+        gamePositionToModify = gamePosition;
         MainMenuActivity.playSound(MainMenuActivity.itemClickSound_ID);
         startActivityForResult(intent, MODIFY_GAME);
     }
@@ -161,15 +162,14 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 Updates the "willBuy" property of the game that was selected in the database
                 and gets the updated list of games to update the ListView.
                 */
-                int gamePosition = result.getIntExtra("game_position", 0);
-                Game receivedGame = games.get(gamePosition);
+                Game oldGame = games.get(gamePositionToModify);
                 String new_whenWillBuy = result.getStringExtra("when_will_buy");
-                if(!receivedGame.getWhenWillBuy().equals(new_whenWillBuy))
+                if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
                 {
-                    receivedGame.setWhenWillBuy(new_whenWillBuy);
-                    scrollPos = gamePosition;
+                    oldGame.setWhenWillBuy(new_whenWillBuy);
+                    scrollPos = gamePositionToModify;
                     LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                    task.execute((short) 2, receivedGame);
+                    task.execute((short) 2, oldGame);
                 }
             }
         }
