@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="csci4100.uoit.ca.csci4100_final_project">
 
-    <uses-sdk
-        android:maxSdkVersion="23" />
+    <uses-sdk android:maxSdkVersion="23" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -40,6 +38,9 @@
             android:name=".PopupDialogActivity"
             android:label="@string/title_activity_popup_dialog"
             android:theme="@android:style/Theme.Holo.Dialog" />
+        <activity
+            android:name=".ViewBoughtGameListActivity"
+            android:label="@string/title_activity_view_bought_game_list"></activity>
     </application>
 
 </manifest>

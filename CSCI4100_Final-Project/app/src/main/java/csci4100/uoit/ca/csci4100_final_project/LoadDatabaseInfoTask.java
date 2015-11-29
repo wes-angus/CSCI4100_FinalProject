@@ -7,8 +7,7 @@ import android.os.AsyncTask;
 
 import java.util.ArrayList;
 
-//TODO: Sort list of games from the database
-//TODO: Add checks for recently removed/bought games so they aren't re-added to the database
+//TODO: Add delete for multiple games
 public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game>>
 {
     private DatabaseListener listener = null;
@@ -28,7 +27,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, ArrayList<Game
         /*
         This variable determines which database function to use
         0 = Add multiple games, 1 = get the list of games only, 2 = Update the given game,
-        3 = Remove the given game from the database
+        3 = Delete the given game, 4 = Delete multiple games
         */
         option = (short) params[0];
         ArrayList<Game> games = new ArrayList<>();

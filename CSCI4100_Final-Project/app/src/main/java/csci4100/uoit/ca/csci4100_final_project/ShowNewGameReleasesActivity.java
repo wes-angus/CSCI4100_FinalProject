@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Sort list of games from the database
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
     public static final int MODIFY_GAME = 10;
@@ -96,7 +97,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     @Override
     public void syncGames(final ArrayList<Game> games, short option)
     {
-        if(option == 1 || option == 2)
+        if(option > 0 && option < 4)
         {
             if(!(games.isEmpty()))
             {
@@ -120,9 +121,14 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 }
             }
 
-            if (option == 2) {
+            if (option == 2)
+            {
                 listView.setSelection(scrollPos);
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
+            }
+            else if(option == 3)
+            {
+                Toast.makeText(this, R.string.del_success, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -145,31 +151,43 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
     public void backToMenu(View view)
     {
-        MainMenuActivity.playSound(MainMenuActivity.buttonSound1_ID);
-        finish();
+        AboutActivity.backToPrevActivity(this);
     }
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent result)
     {
-        //Gets a result back from the AskQuestion activity
+        //Gets a result back from GameDetailAndModifyActivity
         super.onActivityResult(reqCode, resCode, result);
         if (resCode == Activity.RESULT_OK)
         {
             if(reqCode == MODIFY_GAME)
             {
-                /*
-                Updates the "willBuy" property of the game that was selected in the database
-                and gets the updated list of games to update the ListView.
-                */
+                boolean deleteGame = result.getBooleanExtra("delete_game", false);
                 Game oldGame = games.get(gamePositionToModify);
-                String new_whenWillBuy = result.getStringExtra("when_will_buy");
-                if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
+                if(!deleteGame)
                 {
-                    oldGame.setWhenWillBuy(new_whenWillBuy);
-                    scrollPos = gamePositionToModify;
+                    /*
+                    Updates the "willBuy" property of the game that was selected in the database
+                    and gets the updated list of games to update the ListView.
+                    */
+                    String new_whenWillBuy = result.getStringExtra("when_will_buy");
+                    if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
+                    {
+                        oldGame.setWhenWillBuy(new_whenWillBuy);
+                        scrollPos = gamePositionToModify;
+                        LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                        task.execute((short) 2, oldGame);
+                    }
+                }
+                else
+                {
+                    /*
+                    Removes the game that was selected from the database
+                    and gets the updated list of games to update the ListView.
+                    */
                     LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                    task.execute((short) 2, oldGame);
+                    task.execute((short) 3, oldGame);
                 }
             }
         }

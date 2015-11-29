@@ -68,4 +68,6 @@
     <string name="no">No</string>
     <string name="calendar_add">Add To\nCalendar</string>
     <string name="bought_btn_txt">View Bought Game List</string>
+    <string name="title_activity_view_bought_game_list">ViewBoughtGameList</string>
+    <string name="del_success">Removed game from New Game List successfully!</string>
 </resources>

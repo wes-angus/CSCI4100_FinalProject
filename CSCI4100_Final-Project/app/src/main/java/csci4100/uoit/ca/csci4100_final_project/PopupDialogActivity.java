@@ -1,3 +1,5 @@
+//Authors: Wesley Angus
+
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.os.Bundle;
@@ -21,14 +23,16 @@ public class PopupDialogActivity extends Activity
         }
     }
 
-    public void noClick(View view)
+    public void yesClick(View view)
     {
+        MainMenuActivity.playSound(MainMenuActivity.confirmSound_ID);
         setResult(RESULT_OK);
         finish();
     }
 
-    public void yesClick(View view)
+    public void noClick(View view)
     {
+        MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
         setResult(RESULT_CANCELED);
         finish();
     }

@@ -33,7 +33,8 @@ public class GameDetailAndModifyActivity extends Activity
         Bundle bundle = getIntent().getExtras();
         game = bundle.getParcelable("game");
         spinner = (Spinner) findViewById(R.id.willBuy_spinner);
-        if(game != null) {
+        if(game != null)
+        {
             populateSpinner(spinner, R.array.options, game.getWhenWillBuy());
             showGameInfo(game);
         }
@@ -126,5 +127,30 @@ public class GameDetailAndModifyActivity extends Activity
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
         startActivity(intent);
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent result)
+    {
+        //Gets a result back from PopupDialogActivity
+        super.onActivityResult(reqCode, resCode, result);
+        if(bought)
+        {
+            MainMenuActivity.addBoughtGame(game);
+        }
+        else
+        {
+            MainMenuActivity.addRecentlyRemovedGame(game);
+        }
+        if (resCode == Activity.RESULT_OK)
+        {
+            if(reqCode == DELETE_DIALOG)
+            {
+                Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
+                intent.putExtra("delete_game", true);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
     }
 }

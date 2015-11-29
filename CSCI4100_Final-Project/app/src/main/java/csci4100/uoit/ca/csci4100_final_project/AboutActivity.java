@@ -29,10 +29,15 @@ public class AboutActivity extends Activity
         textView.setText(text, TextView.BufferType.SPANNABLE);
     }
 
-    public void backToMenu(View view)
+    public static void backToPrevActivity(Activity activity)
     {
         MainMenuActivity.playSound(MainMenuActivity.buttonSound1_ID);
-        finish();
+        activity.finish();
+    }
+
+    public void backToMenu(View view)
+    {
+        backToPrevActivity(this);
     }
 
     // class for building the about

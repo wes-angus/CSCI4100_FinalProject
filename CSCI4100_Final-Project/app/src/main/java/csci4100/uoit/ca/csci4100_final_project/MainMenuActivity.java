@@ -20,18 +20,28 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
+TODO: Add checks for recently removed/bought games so they aren't re-added to the database
 TODO: Add activity for looking at a list of already bought games
 TODO: (with possibly manual adding of user-specified titles)
+TODO: Remove recently removed games whose release date is a week past
 */
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
-    private static final String prefs_filename = "loadOnce";
+    private static final String prefs_filename = "newGameList_prefs";
     private String url = "";
     private static SoundPool soundPool = null;
     public static int buttonSound1_ID = -1;
@@ -41,6 +51,9 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public static int itemClickSound_ID = -1;
     private static Map<Integer, Boolean> soundLoaded;
     private boolean added = false;
+    private static Set<String> boughtGames;
+    private static Set<String> removedGames;
+    private static Map<String, String> removedGameDates;
 
     @SuppressLint("NewApi")
     @Override
@@ -60,14 +73,30 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             task.execute(url);
         }
 
-        AssetManager assetManager = this.getAssets();
+        boughtGames = new LinkedHashSet<>();
+        removedGames = new HashSet<>();
+        removedGameDates = new HashMap<>();
 
+        if(savedInstanceState != null)
+        {
+            List<String> boughtGameList = savedInstanceState.getStringArrayList("bought_game_list");
+            if(boughtGameList != null)
+            {
+                boughtGames.addAll(boughtGameList);
+            }
+            List<String> removedGameList = savedInstanceState.getStringArrayList("removed_game_list");
+            if(removedGameList != null)
+            {
+                removedGames.addAll(removedGameList);
+            }
+        }
+
+        AssetManager assetManager = this.getAssets();
         AssetFileDescriptor fd1;
         AssetFileDescriptor fd2;
         AssetFileDescriptor fd3;
         AssetFileDescriptor fd4;
         AssetFileDescriptor fd5;
-
         soundLoaded = new HashMap<>();
 
         if((android.os.Build.VERSION.SDK_INT) >= 21) // Checked sdk value, not an error
@@ -122,31 +151,20 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
     private void setSoundLoadedListener()
     {
-        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener()
-        {
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             //Only play sound after it has loaded
             @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status)
-            {
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 soundLoaded.put(sampleId, true);
-                if(sampleId == buttonSound1_ID)
-                {
+                if (sampleId == buttonSound1_ID) {
                     Log.i("SoundLoaded", "Button Sound 1 loaded!");
-                }
-                else if(sampleId == buttonSound2_ID)
-                {
+                } else if (sampleId == buttonSound2_ID) {
                     Log.i("SoundLoaded", "Button Sound 2 loaded!");
-                }
-                else if(sampleId == itemClickSound_ID)
-                {
+                } else if (sampleId == itemClickSound_ID) {
                     Log.i("SoundLoaded", "Item Click Sound loaded!");
-                }
-                else if(sampleId == cancelSound_ID)
-                {
+                } else if (sampleId == cancelSound_ID) {
                     Log.i("SoundLoaded", "Cancel Sound loaded!");
-                }
-                else if(sampleId == confirmSound_ID)
-                {
+                } else if (sampleId == confirmSound_ID) {
                     Log.i("SoundLoaded", "Save Sound loaded!");
                 }
             }
@@ -154,13 +172,15 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState )
+    public void onSaveInstanceState(Bundle savedInstanceState)
     {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
 
-        // Save the current state of downloading + parsing the new game releases feed
+        // Save the current activity state
         savedInstanceState.putBoolean("added", added);
+        savedInstanceState.putStringArrayList("bought_game_list", getBoughtGameList());
+        savedInstanceState.putStringArrayList("removed_game_list", new ArrayList<>(removedGames));
     }
 
     @Override
@@ -184,6 +204,12 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("added", false);
+        editor.putStringSet("bought_games", boughtGames);
+        editor.putStringSet("removed_games", removedGames);
+        for (String game : removedGames)
+        {
+            editor.putString(game, removedGameDates.get(game));
+        }
         editor.apply();
     }
 
@@ -195,6 +221,12 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("added", added);
+        editor.putStringSet("bought_games", boughtGames);
+        editor.putStringSet("removed_games", removedGames);
+        for (String game : removedGames)
+        {
+            editor.putString(game, removedGameDates.get(game));
+        }
         editor.apply();
     }
 
@@ -205,6 +237,34 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
         added = prefs.getBoolean("added", false);
+        boughtGames = prefs.getStringSet("bought_games", new LinkedHashSet<String>());
+        removedGames = prefs.getStringSet("removed_games", new HashSet<String>());
+        for (Iterator<String> i = removedGames.iterator(); i.hasNext();)
+        {
+            String game = i.next();
+            String gameDate = prefs.getString(game, "");
+            removedGameDates.put(game, gameDate);
+            /*
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy");
+            Date curDate = calendar.getTime();
+            try
+            {
+                Date date = dateFormat.parse(gameDate);
+                long diffTime = curDate.getTime() - date.getTime();
+                long diffDays = diffTime / (1000 * 60 * 60 * 24);
+                if(diffDays > 7)
+                {
+                    i.remove();
+                    removedGameDates.remove(game);
+                }
+            }
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+            }
+            */
+        }
     }
 
     @Override
@@ -234,9 +294,19 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     {
         Toast.makeText(this, R.string.games_downloaded, Toast.LENGTH_SHORT).show();
 
+        //Check if games were removed from the game list, so they don't get re-added to the list
+        List<Game> gamesToAdd = new ArrayList<>();
+        for (Game game : data)
+        {
+            if(!removedGames.contains(game.getTitle()))
+            {
+                gamesToAdd.add(game);
+            }
+        }
+
         //Adds the list of games to the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-        task.execute((short) 0, data);
+        task.execute((short) 0, gamesToAdd);
     }
 
     @Override
@@ -249,6 +319,27 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             added = true;
             Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public static void addBoughtGame(Game game)
+    {
+        boughtGames.add(game.getTitle());
+        addRecentlyRemovedGame(game);
+    }
+
+    public static void addRecentlyRemovedGame(Game game)
+    {
+        removedGames.add(game.getTitle());
+        removedGameDates.put(game.getTitle(), game.getReleaseDate());
+    }
+
+    public static ArrayList<String> getBoughtGameList()
+    {
+        if(boughtGames != null)
+        {
+            return new ArrayList<>(boughtGames);
+        }
+        return new ArrayList<>();
     }
 
     public static void playSound(int soundID)
@@ -275,6 +366,10 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
     public void viewBoughtList(View view)
     {
-
+        /*
+        Intent intent = new Intent(this, ViewBoughtGameListActivity.class);
+        playSound(buttonSound1_ID);
+        startActivity(intent);
+        */
     }
 }
