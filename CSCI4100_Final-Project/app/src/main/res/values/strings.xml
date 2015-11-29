@@ -57,12 +57,15 @@
     </string-array>
     <string name="title_activity_popup_dialog">Confirm Delete Dialog</string>
     <string name="never_will_buy_dialog">
-        This action will remove the game permanently from the list of new game releases.
-        Is that okay?
+        This action will remove the game permanently from the list of new game releases, and will
+        not be added back upon re-downloading the list of new game releases. Is that okay?
     </string>
-    <string name="add_to_bought_list_dialog"></string>
+    <string name="add_to_bought_list_dialog">
+        This action will remove the game permanently from the list of new game releases,
+        and add it to the list of purchased games. Is that okay?
+    </string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="calendar_add">Add To\nCalendar</string>
-    <string name="bought_btn_txt">View Bought List</string>
+    <string name="bought_btn_txt">View Bought Game List</string>
 </resources>

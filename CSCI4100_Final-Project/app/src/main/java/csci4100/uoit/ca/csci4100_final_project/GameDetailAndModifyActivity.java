@@ -22,7 +22,7 @@ public class GameDetailAndModifyActivity extends Activity
 
     Game game;
     Spinner spinner;
-    boolean already_bought = false;
+    boolean bought = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -88,8 +88,9 @@ public class GameDetailAndModifyActivity extends Activity
         if(spinner.getSelectedItem().toString().equals(neverWillBuy))
         {
             Intent c_intent1 = new Intent(this, PopupDialogActivity.class);
-            already_bought = false;
-            //startActivityForResult(c_intent1, DELETE_DIALOG);
+            bought = false;
+            c_intent1.putExtra("already_bought", false);
+            startActivityForResult(c_intent1, DELETE_DIALOG);
         }
         else
         {
@@ -97,8 +98,9 @@ public class GameDetailAndModifyActivity extends Activity
             if (checkBox.isChecked())
             {
                 Intent c_intent2 = new Intent(this, PopupDialogActivity.class);
-                already_bought = true;
-                //startActivityForResult(c_intent2, DELETE_DIALOG);
+                bought = true;
+                c_intent2.putExtra("already_bought", true);
+                startActivityForResult(c_intent2, DELETE_DIALOG);
             }
             else
             {
