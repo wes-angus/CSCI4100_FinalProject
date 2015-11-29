@@ -136,11 +136,11 @@ public class GameDetailAndModifyActivity extends Activity
         super.onActivityResult(reqCode, resCode, result);
         if(bought)
         {
-            MainMenuActivity.addBoughtGame(game);
+            //addBoughtGame(game);
         }
         else
         {
-            MainMenuActivity.addRecentlyRemovedGame(game);
+            //addRecentlyRemovedGame(game);
         }
         if (resCode == Activity.RESULT_OK)
         {

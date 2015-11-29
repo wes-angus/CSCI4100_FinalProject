@@ -101,6 +101,27 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         {
             if(!(games.isEmpty()))
             {
+                /*
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy");
+                Date curDate = calendar.getTime();
+                try
+                {
+                    Date date = dateFormat.parse(gameDate);
+                    long diffTime = curDate.getTime() - date.getTime();
+                    long diffDays = diffTime / (1000 * 60 * 60 * 24);
+                    if(diffDays > 7)
+                    {
+                        i.remove();
+                        removedGameDates.remove(game);
+                    }
+                }
+                catch (ParseException e)
+                {
+                    e.printStackTrace();
+                }
+                */
+
                 listView = (ListView) findViewById(R.id.game_listView);
                 populateList(listView, games);
 
