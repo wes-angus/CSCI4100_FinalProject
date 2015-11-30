@@ -27,10 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/*
-TODO: Add activity for looking at a list of already bought games
-TODO: (with possibly manual adding of user-specified titles)
-*/
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
     private static final String prefs_filename = "loadOnce";
@@ -245,10 +241,6 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         }
         else if(option == 5)
         {
-            /*
-            TODO: Add checks for recently removed games so they get removed
-            TODO: from the database once they're no longer in the feed
-            */
             List<Game> gamesToRemove = new ArrayList<>();
             for (int i = 0; i < games.size(); i++)
             {

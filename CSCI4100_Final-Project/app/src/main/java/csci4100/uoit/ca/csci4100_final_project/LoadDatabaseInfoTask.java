@@ -34,7 +34,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         option = (short) params[0];
         List<Game> games = new ArrayList<>();
         Game singleGame = null;
-        if(option == 0 || option == 3)
+        if(option == 0 || option == 3 || option == 7)
         {
             if(params[1] != null)
             {

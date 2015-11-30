@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-//TODO: Get list of unlikely to buy games whose release dates are a week past
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
     public static final int MODIFY_GAME = 10;
@@ -102,39 +101,22 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     @Override
     public void syncGames(final List<Game> games, short option)
     {
-        if(option > 0 && option < 4)
+        if(option == 1 || option == 2 || option == 7)
         {
             if(!games.isEmpty())
             {
-                //TODO: Remove games that've expired from the database
                 this.games = games;
-                //getExpiredGames();
 
-                /*
-                Avoid going out of bounds when the number of items from the query
-                decreases after the database is updated (when the "whenWillBuy"
-                value is changed to "Will Never Buy It" or "Bought"
-                */
-                if(scrollPos > (games.size() - 1))
+                if(option == 1)
                 {
-                    scrollPos = games.size() - 1;
+                    //Gets the list of games that may have expired from the database
+                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this,
+                            getApplicationContext());
+                    task.execute((short) 6);
                 }
-
-                listView = (ListView) findViewById(R.id.game_listView);
-                populateList(listView, games);
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                else
                 {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
-                    {
-                        goToModifyScreen(position);
-                    }
-                });
-
-                if(listView_state != null)
-                {
-                    listView.onRestoreInstanceState(listView_state);
+                    showGameList();
                 }
             }
 
@@ -144,14 +126,54 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
             }
         }
+        else if(option == 6)
+        {
+            List<Game> expiredGames = getExpiredGames(games);
+
+            if(!expiredGames.isEmpty())
+            {
+                //Removes the expired games from the database
+                LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                task.execute((short) 7, expiredGames);
+            }
+            else
+            {
+                showGameList();
+            }
+        }
     }
 
-    private void populateList(ListView listView, List<Game> data)
+    private void showGameList()
     {
-        listView.setAdapter(new GameAdapter(this, data));
+        /*
+        Avoid going out of bounds when the number of items from the query
+        decreases after the database is updated (when the "whenWillBuy"
+        value is changed to "Will Never Buy It" or "Bought"
+        */
+        if(scrollPos > (games.size() - 1))
+        {
+            scrollPos = games.size() - 1;
+        }
+
+        listView = (ListView) findViewById(R.id.game_listView);
+        listView.setAdapter(new GameAdapter(this, games));
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+            {
+                goToModifyScreen(position);
+            }
+        });
+
+        if(listView_state != null)
+        {
+            listView.onRestoreInstanceState(listView_state);
+        }
     }
 
-    private List<Game> getExpiredGames()
+    private List<Game> getExpiredGames(List<Game> possiblyExpiredGames)
     {
         List<Game> expiredGames = new ArrayList<>();
         /*
@@ -159,7 +181,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         the user is unlikely to buy), and if the date is more than a week past, the
         game is added to a list of games that will be removed from the database
         */
-        for (Game game : games)
+        for (Game game : possiblyExpiredGames)
         {
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy", Locale.US);
@@ -168,8 +190,8 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
             {
                 Date date = dateFormat.parse(game.getReleaseDate());
                 long diffTime = curDate.getTime() - date.getTime();
-                long diffDays = (long) ((double) diffTime / (double)(1000 * 60 * 60 * 24));
-                if(diffDays > 8)
+                long diffDays = (long) ((double) diffTime / (double) (1000 * 60 * 60 * 24));
+                if(diffDays > 7)
                 {
                     expiredGames.add(game);
                 }
@@ -217,7 +239,8 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 {
                     oldGame.setWhenWillBuy(new_whenWillBuy);
                     scrollPos = gamePositionToModify;
-                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this,
+                            getApplicationContext());
                     task.execute((short) 2, oldGame);
                 }
             }
