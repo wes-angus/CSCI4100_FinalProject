@@ -1,4 +1,4 @@
-//Authors: Wesley Angus
+//Authors: Wesley Angus, Montgomery Alban
 
 package csci4100.uoit.ca.csci4100_final_project;
 
@@ -11,6 +11,7 @@ import java.util.List;
 //Async task that performs operations on an SQLite database
 public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 {
+    // constants to use in place of numbers
     public static class SYNC_ENUM {
         final static short
                 NON_OPTION = -1,
@@ -36,10 +37,12 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         dbHelper = new GameDBHelper(context);
     }
 
-    //@SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked") // a attribute for suppressing the unchecked warning
     @Override
     protected List<Game> doInBackground(Object... params)
     {
+        if(params == null || params.length == 0)
+            return null;
         /*
         This variable determines which database method to execute
         0 = Add 1 or more games, 1 = get the list of games only, 2 = Update the given game,
@@ -51,24 +54,17 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         List<Game> games = new ArrayList<>();
         Game singleGame = null;
 
-        //If you are adding or deleting multiple games, 2nd argument is a list of Game objects
-        if(option == SYNC_ENUM.ADD_GAMES
-                || option == SYNC_ENUM.DELETE_GAMES
-                || option == SYNC_ENUM.REMOVE_AND_SHOW)
-        {
-            if(params[1] != null)
-            {
-                /*
-                Ignore this warning, if the option is one of the ones given above, the 2nd
-                argument should be a list, otherwise the task is being used incorrectly
-                */
+        if(params[1] != null) {
+            //If you are adding or deleting multiple games, 2nd argument is a list of Game objects
+            if (option == SYNC_ENUM.ADD_GAMES
+                    || option == SYNC_ENUM.DELETE_GAMES
+                    || option == SYNC_ENUM.REMOVE_AND_SHOW) {
+                    /*
+                    Ignore this warning, if the option is one of the ones given above, the 2nd
+                    argument should be a list, otherwise the task is being used incorrectly
+                    */
                 games = (List<Game>) params[1];
-            }
-        }
-        else if(option == SYNC_ENUM.UPDATE_GAME_SINGLE && params[1] instanceof Game)
-        {
-            if(params[1] != null)
-            {
+            } else if (option == SYNC_ENUM.UPDATE_GAME_SINGLE && params[1] instanceof Game) {
                 singleGame = (Game) params[1];
             }
         }

@@ -103,7 +103,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
-            builder.setMaxStreams(5);0
+            builder.setMaxStreams(5);
             if(soundPool == null)
             {
                 soundPool = builder.build();

@@ -205,7 +205,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         {
             listView.onRestoreInstanceState(listView_state);
         }
-    }0
+    }
 
     private List<Game> getExpiredGames(List<Game> possiblyExpiredGames)
     {
