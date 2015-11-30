@@ -4,7 +4,6 @@ package csci4100.uoit.ca.csci4100_final_project;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Parcelable;
@@ -21,6 +20,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
     List<Game> games;
     private Parcelable listView_state = null;
     public static final String B_L_VIEW_STATE = "bought_listView_prevState";
+    boolean search_error_showing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,6 +47,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
         // Save the current list view position
         listView_state = listView.onSaveInstanceState();
         savedInstanceState.putParcelable(B_L_VIEW_STATE, listView_state);
+        savedInstanceState.putBoolean("bought_search_error_showing", search_error_showing);
     }
 
     @Override
@@ -57,6 +58,17 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
 
         // Restore activity state from saved instance
         listView_state = savedInstanceState.getParcelable(B_L_VIEW_STATE);
+        search_error_showing = savedInstanceState.getBoolean("bought_search_error_showing", false);
+        if(search_error_showing)
+        {
+            EditText editText = (EditText) findViewById(R.id.bought_searchField);
+            editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+        }
+        else
+        {
+            EditText editText = (EditText) findViewById(R.id.bought_searchField);
+            editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
     @Override
@@ -109,6 +121,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
 
     public void search(View view)
     {
-        ShowNewGameReleasesActivity.searchGameList(games, this, listView, R.id.bought_searchField);
+        search_error_showing = ShowNewGameReleasesActivity.searchGameList(games, this, listView,
+                R.id.bought_searchField);
     }
 }
