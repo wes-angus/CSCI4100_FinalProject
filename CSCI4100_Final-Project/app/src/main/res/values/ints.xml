@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Authors: Montgomery Alban -->
 <resources>
     <integer name="sound_ref_count">4</integer>
 </resources>

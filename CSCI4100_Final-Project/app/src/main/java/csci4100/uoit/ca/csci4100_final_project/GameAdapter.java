@@ -12,11 +12,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class GameAdapter extends BaseAdapter {
+//Class that serves as an adapter for the ListView that shows the new game releases
+public class GameAdapter extends BaseAdapter
+{
     private Context context;
     private List<Game> data;
 
-    public GameAdapter(Context context, List<Game> data) {
+    public GameAdapter(Context context, List<Game> data)
+    {
         this.data = data;
         this.context = context;
     }
@@ -50,7 +53,7 @@ public class GameAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_view_game_item, parent, false);
         }
 
-        //Populate the views with the data from the "new game" feed
+        //Populate the views with the list of new game releases from the database
         TextView lblTitle = (TextView)convertView.findViewById(R.id.lblTitle);
         lblTitle.setText(gameToDisplay.getTitle());
 
@@ -59,6 +62,7 @@ public class GameAdapter extends BaseAdapter {
 
         TextView lblWhenWillBuy = (TextView)convertView.findViewById(R.id.lblWhenWillBuy);
         lblWhenWillBuy.setText(R.string.will_i_buy);
+        //Displays the "whenWillBuy" value with a bit of text clarifying what the value means
         lblWhenWillBuy.setText(lblWhenWillBuy.getText() + "\n" + gameToDisplay.getWhenWillBuy());
 
         TextView lblDesc = (TextView)convertView.findViewById(R.id.lblDesc);

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+//Activity for displaying the list of new game releases in a ListView
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
     public static final int MODIFY_GAME = 10;
@@ -45,6 +46,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
         listView = (ListView) findViewById(R.id.game_listView);
 
+        //Show the normal background of the search bar
         EditText editText = (EditText) findViewById(R.id.searchField);
         editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
 
@@ -56,31 +58,38 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState)
     {
-        // Always call the superclass so it can save the view hierarchy state
+        //Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
 
-        // Save the current list view position
+        //Save the current list view state
         listView_state = listView.onSaveInstanceState();
         savedInstanceState.putParcelable(L_VIEW_STATE, listView_state);
+        //Restores the search bar background colour state (whether it showed an error last or not)
         savedInstanceState.putBoolean("search_error_showing", search_error_showing);
     }
 
     @Override
     public void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
     {
-        // Always call the superclass so it can restore the view hierarchy
+        //Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
 
-        // Restore activity state from saved instance
+        //Restores the previous list view state
         listView_state = savedInstanceState.getParcelable(L_VIEW_STATE);
+        /*
+        Restores the search bar background colour state and sets the search bar's
+        background colour to make sure it's maintained when rotating the phone
+        */
         search_error_showing = savedInstanceState.getBoolean("search_error_showing", false);
         if(search_error_showing)
         {
+            //Show the errored background of the search bar
             EditText editText = (EditText) findViewById(R.id.searchField);
             editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
         }
         else
         {
+            //Show the normal background of the search bar
             EditText editText = (EditText) findViewById(R.id.searchField);
             editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
         }
@@ -89,8 +98,9 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     @Override
     public void onResume()
     {
-        super.onResume(); // Always call the superclass method first
+        super.onResume(); //Always call the superclass method first
 
+        //Restores the previous list view state
         if(listView_state != null)
         {
             listView.onRestoreInstanceState(listView_state);
@@ -145,6 +155,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
             if (option == LoadDatabaseInfoTask.SYNC_ENUM.UPDATE_GAME_SINGLE)
             {
+                //Set the ListView to show the updated item after updating
                 listView.setSelection(scrollPos);
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
             }
@@ -166,10 +177,11 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         }
     }
 
+    //Displays the games received from the database in the list view
     private void showGameList()
     {
         /*
-        Avoid going out of bounds when the number of items from the query
+        Avoids going out of bounds when the number of items from the query
         decreases after the database is updated (when the "whenWillBuy"
         value is changed to "Will Never Buy It" or "Bought"
         */
@@ -188,11 +200,12 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
             }
         });
 
+        //Restores the previous list view state (if the content hasn't changed)
         if(listView_state != null)
         {
             listView.onRestoreInstanceState(listView_state);
         }
-    }
+    }0
 
     private List<Game> getExpiredGames(List<Game> possiblyExpiredGames)
     {
@@ -225,6 +238,10 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         return expiredGames;
     }
 
+    /*
+    Parcels-up the game and sends it to the GameDetailAndModify activity,
+    which starts when you select a game from the list view
+    */
     public void goToModifyScreen(int gamePosition)
     {
         Intent intent = new Intent(this, GameDetailAndModifyActivity.class);
@@ -267,10 +284,11 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
     }
 
+    //Searches for games in a ListView
     public static boolean searchGameList(List<Game> games, Activity activity, ListView listView,
-                                         int textFieldID)
+                                         int searchFieldID)
     {
-        EditText editText = (EditText) activity.findViewById(textFieldID);
+        EditText editText = (EditText) activity.findViewById(searchFieldID);
         String searchText = editText.getText().toString().toLowerCase();
         String[] searchTerms = searchText.split(" ");
         int found_pos = 0;
@@ -298,6 +316,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         boolean search_error_showing = true;
         if(found)
         {
+            //Show the normal background of the search bar and plays a "search"-type sound
             search_error_showing = false;
             editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
             MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
@@ -305,6 +324,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         }
         else
         {
+            //Show the "errored" background of the search bar and plays an "error"-type sound
             MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
             editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
         }
@@ -313,6 +333,10 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
     public void search(View view)
     {
+        /*
+        Runs the method for searching the game list and
+        sets the background colour state of the search bar
+        */
         search_error_showing = searchGameList(games, this, listView, R.id.searchField);
     }
 }

@@ -19,6 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/*
+Activity that allows you to change the "whenWillBuy" property
+of a game and lets you view more information about said game
+*/
 public class GameDetailAndModifyActivity extends Activity
 {
     public static final int DELETE_DIALOG = 13;
@@ -34,10 +38,11 @@ public class GameDetailAndModifyActivity extends Activity
         setContentView(R.layout.activity_game_detail_and_modify);
 
         Bundle bundle = getIntent().getExtras();
-        game = bundle.getParcelable("game");
+        game = bundle.getParcelable("game");//Gets the game sent by ShowNewGameReleasesActivity
         spinner = (Spinner) findViewById(R.id.willBuy_spinner);
         if(game != null)
         {
+            //Put all of the selectable "whenWillBuy" values in the spinner
             populateSpinner(spinner, R.array.options, game.getWhenWillBuy());
             showGameInfo(game);
         }
@@ -63,6 +68,7 @@ public class GameDetailAndModifyActivity extends Activity
         spinner.setSelection(savedInstanceState.getInt("spinner_pos"));
     }
 
+    //Populates the textFields with info about the game
     private void showGameInfo(Game game)
     {
         TextView titleView = (TextView) findViewById(R.id.title_txt);
@@ -73,6 +79,7 @@ public class GameDetailAndModifyActivity extends Activity
         descView.setText(game.getDescription());
     }
 
+    //Puts all of the possible whenWillBuy values into the spinner
     private void populateSpinner(Spinner spinner, int arrayId, String whenWillBuy)
     {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, arrayId,
@@ -87,10 +94,17 @@ public class GameDetailAndModifyActivity extends Activity
 
     public void saveWillBuyProperty(View view)
     {
+        //Gets the array of "whenWillBuy" values
         String[] whenWillBuyValues = getResources().getStringArray(R.array.options);
+        //neverWillBuy = "Will Never Buy It"
         String neverWillBuy = whenWillBuyValues[whenWillBuyValues.length - 1];
+        //If the game will be removed...
         if(spinner.getSelectedItem().toString().equals(neverWillBuy))
         {
+            /*
+            ...open a dialog to confirm whether the user wishes
+            to remove the game from the new game list or not
+            */
             Intent c_intent1 = new Intent(this, PopupDialogActivity.class);
             bought = false;
             c_intent1.putExtra("already_bought", false);
@@ -99,8 +113,14 @@ public class GameDetailAndModifyActivity extends Activity
         else
         {
             CheckBox checkBox = (CheckBox) findViewById(R.id.cBox_bought);
+            //If the game will be labeled as "bought"...
             if (checkBox.isChecked())
             {
+                /*
+                ...open a dialog to confirm whether the user wishes to treat
+                the game as a "bought" game, moving it from the new game list
+                to the bought game list and preventing modification of this game
+                */
                 Intent c_intent2 = new Intent(this, PopupDialogActivity.class);
                 bought = true;
                 c_intent2.putExtra("already_bought", true);
@@ -108,6 +128,10 @@ public class GameDetailAndModifyActivity extends Activity
             }
             else
             {
+                /*
+                Sends the selected whenWillBuy value to the
+                previous activity to update the database
+                */
                 Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
                 intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
                 setResult(Activity.RESULT_OK, intent);
@@ -126,6 +150,7 @@ public class GameDetailAndModifyActivity extends Activity
 
     public static void startGameLinkActivity(Game game, Activity activity)
     {
+        //Opens the link to the game in the user's preferred browser
         String url = game.getLink();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
@@ -149,12 +174,18 @@ public class GameDetailAndModifyActivity extends Activity
                 Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
                 if(!bought)
                 {
+                    //Sets the whenWillBuy value to the "removed game" value: "Will Never Buy"
                     intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
                 }
                 else
                 {
+                    //Sets the whenWillBuy value to the "bought game" value: "Bought"
                     intent.putExtra("when_will_buy", getString(R.string.bought));
                 }
+                /*
+                Sends the selected whenWillBuy value to the
+                previous activity to update the database
+                */
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -163,6 +194,7 @@ public class GameDetailAndModifyActivity extends Activity
 
     public void createCalendarEvent(View view)
     {
+        //Creates a calendar event concerning the game on the game's release date
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 ShowNewGameReleasesActivity.parseDatePattern, Locale.US);
         try

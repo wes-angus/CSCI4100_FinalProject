@@ -12,11 +12,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class BoughtGameAdapter extends BaseAdapter {
+//Class that serves as an adapter for the ListView that shows the bought games
+public class BoughtGameAdapter extends BaseAdapter
+{
     private Context context;
     private List<Game> data;
 
-    public BoughtGameAdapter(Context context, List<Game> data) {
+    public BoughtGameAdapter(Context context, List<Game> data)
+    {
         this.data = data;
         this.context = context;
     }
@@ -47,7 +50,7 @@ public class BoughtGameAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_view_bought_game_item, parent, false);
         }
 
-        //Populate the views with the data from the "new game" feed
+        //Populate the views with the list of bought games from the database
         TextView lblTitle = (TextView)convertView.findViewById(R.id.lblBoughtTitle);
         lblTitle.setText(gameToDisplay.getTitle());
 
