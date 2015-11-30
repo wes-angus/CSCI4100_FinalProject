@@ -46,4 +46,6 @@
         <!--sound_site--><item>freesound.org</item><!--sound_user--><item>RunnerPack</item>
             <!--sound_location--><item>https://www.freesound.org/people/RunnerPack/sounds/87035/</item><!--sound_name--><item>menusel.wav</item>
     </string-array>
+    <string name="title_activity_maps">You and Choice</string>
+    <string name="find_stores">Find Stores</string>
 </resources>

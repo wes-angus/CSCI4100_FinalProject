@@ -1,8 +1,7 @@
-//Authors: Wesley Angus
+//Authors: Wesley Angus, Montgomery Alban
 
 package csci4100.uoit.ca.csci4100_final_project;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -11,11 +10,21 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,12 +40,23 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     public static int saveSound_ID = -1;
     public static int itemClickSound_ID = -1;
 
+    GoogleApiClient mGoogleApiClient;
+
     @Override
-    //@SuppressLint("NewApi")
+    //@SuppressLint("NewApi") // Could be used to suppress false "errors"
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        // Setting up the google geographic api
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+                .build();
 
         //Parses the new game releases feed in an AsyncTask
         DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
@@ -60,6 +80,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             soundPool = builder.build();
         }
         else{
+            //cancel deprecation error
             //noinspection deprecation
             soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         }
@@ -148,4 +169,78 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         soundPool.play(buttonSound1_ID, 1, 1, 0, 0, 1);
         startActivity(intent);
     }
+
+    // utility changed to just call the picker
+    public void viewMap(View view) {
+        //Intent showMapIntent = new Intent(MainMenuActivity.this, MapsActivity.class);
+        //startActivity(showMapIntent);
+        onPickButtonClick(view);
+    }
+
+    final int REQUEST_PLACE_PICKER = 1;
+    public void onPickButtonClick(View v) {
+        // Construct an intent for the place picker
+        try {
+            PlacePicker.IntentBuilder intentBuilder =
+                    new PlacePicker.IntentBuilder();
+            Intent intent = intentBuilder.build(this);
+            // Start the intent by requesting a result,
+            // identified by a request code.
+            startActivityForResult(intent, REQUEST_PLACE_PICKER);
+
+        } catch (GooglePlayServicesRepairableException e) {
+            // ...
+            Log.e("PlacePicker", "repair");
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // ...
+            Log.e("PlacePicker", "play services not available");
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode,
+                                    int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_PLACE_PICKER
+                && resultCode == Activity.RESULT_OK) {
+
+            // The user has selected a place. Extract the name and address.
+            final Place place = PlacePicker.getPlace(data, this);
+
+            final CharSequence name = place.getName();
+            final CharSequence address = place.getAddress();
+            final LatLng latLng = place.getLatLng();
+            String attributions = PlacePicker.getAttributions(data);
+            if (attributions == null) {
+                attributions = "";
+            }
+
+            Intent showMapIntent = new Intent(MainMenuActivity.this, MapsActivity.class);
+            StoreDetails storeDetails = new StoreDetails(name.toString(),
+                                address.toString(),
+                                Html.fromHtml(attributions).toString(),
+                                latLng);
+            showMapIntent.putExtra("dest", storeDetails);
+            startActivity(showMapIntent);
+
+        } else if(requestCode == REQUEST_PLACE_PICKER) {
+            super.onActivityResult(requestCode, resultCode, data);
+            Log.d("PlacePicker", "Failed pick");
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
 }
