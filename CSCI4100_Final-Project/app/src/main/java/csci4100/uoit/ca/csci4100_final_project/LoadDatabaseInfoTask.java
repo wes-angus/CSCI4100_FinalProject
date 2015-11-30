@@ -10,9 +10,22 @@ import java.util.List;
 
 public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 {
+    public static class SYNC_ENUM {
+        final static short
+                NON_OPTION = -1,
+                ADD_GAMES = 0,
+                GET_GAMES_LIST = 1,
+                UPDATE_GAME_SINGLE = 2,
+                DELETE_GAMES = 3,
+                GET_BOUGHT_GAMES = 4,
+                GET_REMOVED_GAMES = 5,
+                GET_EXPIRED_GAMES = 6,
+                REMOVE_AND_SHOW = 7;
+    }
+
     private DatabaseListener listener = null;
     private GameDBHelper dbHelper = null;
-    short option = -1;
+    short option = SYNC_ENUM.NON_OPTION;
 
     //Use getApplicationContext() for context
     public LoadDatabaseInfoTask(DatabaseListener listener, Context context)
@@ -35,49 +48,51 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         option = (short) params[0];
         List<Game> games = new ArrayList<>();
         Game singleGame = null;
-        if(option == 0 || option == 3 || option == 7)
+        if(option == SYNC_ENUM.ADD_GAMES
+                || option == SYNC_ENUM.DELETE_GAMES
+                || option == SYNC_ENUM.REMOVE_AND_SHOW)
         {
             if(params[1] != null)
             {
                 games = (List<Game>) params[1];
             }
         }
-        else if(option == 2 && params[1] instanceof Game)
+        else if(option == SYNC_ENUM.UPDATE_GAME_SINGLE && params[1] instanceof Game)
         {
             singleGame = (Game) params[1];
         }
 
         switch (option)
         {
-            case 0:
+            case SYNC_ENUM.ADD_GAMES:
                 for (Game game : games)
                 {
                     addGame(game);
                 }
                 break;
-            case 1:
+            case SYNC_ENUM.GET_GAMES_LIST:
                 games = getGames();
                 break;
-            case 2:
+            case SYNC_ENUM.UPDATE_GAME_SINGLE:
                 updateGame(singleGame);
                 games = getGames();
                 break;
-            case 3:
+            case SYNC_ENUM.DELETE_GAMES:
                 for (Game game : games)
                 {
                     deleteGame(game);
                 }
                 break;
-            case 4:
+            case SYNC_ENUM.GET_BOUGHT_GAMES:
                 games = getBoughtGames();
                 break;
-            case 5:
+            case SYNC_ENUM.GET_REMOVED_GAMES:
                 games = getRemovedGames();
                 break;
-            case 6:
+            case SYNC_ENUM.GET_EXPIRED_GAMES:
                 games = getPossiblyExpiredGames();
                 break;
-            case 7:
+            case SYNC_ENUM.REMOVE_AND_SHOW:
                 for (Game game : games)
                 {
                     deleteGame(game);

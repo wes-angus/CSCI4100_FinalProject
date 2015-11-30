@@ -36,7 +36,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
 
         //Gets the list of bought games from the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-        task.execute((short) 4);
+        task.execute(LoadDatabaseInfoTask.SYNC_ENUM.GET_BOUGHT_GAMES);
     }
 
     @Override

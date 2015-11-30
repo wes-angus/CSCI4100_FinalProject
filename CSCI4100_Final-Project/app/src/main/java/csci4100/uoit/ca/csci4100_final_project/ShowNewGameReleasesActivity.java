@@ -50,7 +50,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
         //Gets the list of games from the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-        task.execute((short) 1);
+        task.execute(LoadDatabaseInfoTask.SYNC_ENUM.GET_GAMES_LIST);
     }
 
     @Override
@@ -122,18 +122,20 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     @Override
     public void syncGames(final List<Game> games, short option)
     {
-        if(option == 1 || option == 2 || option == 7)
+        if(option == LoadDatabaseInfoTask.SYNC_ENUM.GET_GAMES_LIST
+                || option == LoadDatabaseInfoTask.SYNC_ENUM.UPDATE_GAME_SINGLE
+                || option == LoadDatabaseInfoTask.SYNC_ENUM.REMOVE_AND_SHOW)
         {
             if(!games.isEmpty())
             {
                 this.games = games;
 
-                if(option == 1)
+                if(option == LoadDatabaseInfoTask.SYNC_ENUM.GET_GAMES_LIST)
                 {
                     //Gets the list of games that may have expired from the database
                     LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this,
                             getApplicationContext());
-                    task.execute((short) 6);
+                    task.execute(LoadDatabaseInfoTask.SYNC_ENUM.GET_EXPIRED_GAMES);
                 }
                 else
                 {
@@ -141,13 +143,13 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 }
             }
 
-            if (option == 2)
+            if (option == LoadDatabaseInfoTask.SYNC_ENUM.UPDATE_GAME_SINGLE)
             {
                 listView.setSelection(scrollPos);
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
             }
         }
-        else if(option == 6)
+        else if(option == LoadDatabaseInfoTask.SYNC_ENUM.GET_EXPIRED_GAMES)
         {
             List<Game> expiredGames = getExpiredGames(games);
 
@@ -155,7 +157,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
             {
                 //Removes the expired games from the database
                 LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                task.execute((short) 7, expiredGames);
+                task.execute(LoadDatabaseInfoTask.SYNC_ENUM.REMOVE_AND_SHOW, expiredGames);
             }
             else
             {
@@ -244,26 +246,25 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     {
         //Gets a result back from GameDetailAndModifyActivity
         super.onActivityResult(reqCode, resCode, result);
-        if (resCode == Activity.RESULT_OK)
+
+        if(resCode == Activity.RESULT_OK && reqCode == MODIFY_GAME)
         {
-            if(reqCode == MODIFY_GAME)
+            Game oldGame = games.get(gamePositionToModify);
+            /*
+            Updates the "willBuy" property of the game that was selected in the database
+            and gets the updated list of games to update the ListView.
+            */
+            String new_whenWillBuy = result.getStringExtra("when_will_buy");
+            if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
             {
-                Game oldGame = games.get(gamePositionToModify);
-                /*
-                Updates the "willBuy" property of the game that was selected in the database
-                and gets the updated list of games to update the ListView.
-                */
-                String new_whenWillBuy = result.getStringExtra("when_will_buy");
-                if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
-                {
-                    oldGame.setWhenWillBuy(new_whenWillBuy);
-                    scrollPos = gamePositionToModify;
-                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this,
-                            getApplicationContext());
-                    task.execute((short) 2, oldGame);
-                }
+                oldGame.setWhenWillBuy(new_whenWillBuy);
+                scrollPos = gamePositionToModify;
+                LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this,
+                        getApplicationContext());
+                task.execute(LoadDatabaseInfoTask.SYNC_ENUM.UPDATE_GAME_SINGLE, oldGame);
             }
         }
+
     }
 
     public static boolean searchGameList(List<Game> games, Activity activity, ListView listView,
@@ -272,59 +273,29 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         EditText editText = (EditText) activity.findViewById(textFieldID);
         String searchText = editText.getText().toString().toLowerCase();
         String[] searchTerms = searchText.split(" ");
-        boolean[] foundTerms = new boolean[searchTerms.length];
         int found_pos = 0;
-        boolean found = true;
-        for (int i = 0; i < foundTerms.length; i++)
-        {
-            foundTerms[i] = false;
-        }
+        boolean found = false;
 
-        gameLoop:
-        for (int i = 0; i < games.size(); i++)
-        {
-            //Initialize values for the current game
-            found = true;
-            for (int index = 0; index < foundTerms.length; index++)
+        if(games != null)
+            for (int i = 0; i < games.size(); i++)
             {
-                foundTerms[index] = false;
-            }
-            String title = games.get(i).getTitle().toLowerCase();
-            for (int j = 0; j < searchTerms.length; j++)
-            {
-                //Check if the individual search term is contained in the ti
-                if(title.contains(searchTerms[j]))
-                {
-                    foundTerms[j] = true;
-                    if(j == searchTerms.length - 1)
-                    {
-                        for (boolean foundTerm : foundTerms)
-                        {
-                            if(!foundTerm)
-                            {
-                                //If one of the search terms doesn't
-                                //match, then the item wasn't found
-                                found = false;
-                                break;
-                            }
-                        }
-                        //If all search terms match...
-                        if(found)
-                        {
-                            //...exit the game loop and set the position to move the ListView to
-                             found_pos = i;
-                            break gameLoop;
-                        }
-                    }
+                //Initialize values for the current game
+                found = true;
+                String title = games.get(i).getTitle().toLowerCase();
+
+                // if all terms are found in the title
+                for( String term : searchTerms ) {
+                    found = found && title.contains(term);
                 }
-                if(i == games.size() - 1 && j == searchTerms.length - 1)
+
+                if (found)
                 {
-                    found = false;
+                    found_pos = i;
+                    break;
                 }
             }
-        }
 
-        boolean search_error_showing;
+        boolean search_error_showing = true;
         if(found)
         {
             search_error_showing = false;
@@ -334,7 +305,6 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         }
         else
         {
-            search_error_showing = true;
             MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
             editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
         }

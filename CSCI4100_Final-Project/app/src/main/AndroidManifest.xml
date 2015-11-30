@@ -39,10 +39,12 @@
         </activity>
         <activity
             android:name=".ShowNewGameReleasesActivity"
-            android:label="@string/title_activity_show_new_game_releases" />
+            android:label="@string/title_activity_show_new_game_releases"
+            android:theme="@android:style/Theme.Holo.Dialog" />
         <activity
             android:name=".GameDetailAndModifyActivity"
-            android:label="@string/title_activity_modify_game_list" />
+            android:label="@string/title_activity_modify_game_list"
+            android:theme="@android:style/Theme.Holo.Dialog" />
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
@@ -53,11 +55,12 @@
             android:theme="@android:style/Theme.Holo.Dialog" />
         <activity
             android:name=".ViewBoughtGameListActivity"
-            android:label="@string/title_activity_view_bought_game_list" />
+            android:label="@string/title_activity_view_bought_game_list"
+            android:theme="@android:style/Theme.Holo.Dialog" />
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" >
-        </activity>
+            android:label="@string/title_activity_maps"
+            android:theme="@android:style/Theme.Holo.Dialog" />
     </application>
 
 </manifest>

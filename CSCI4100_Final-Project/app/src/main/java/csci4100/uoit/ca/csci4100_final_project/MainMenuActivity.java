@@ -249,19 +249,19 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         //Adds the list of games to the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-        task.execute((short) 0, data);
+        task.execute(LoadDatabaseInfoTask.SYNC_ENUM.ADD_GAMES, data);
     }
 
     @Override
     public void syncGames(List<Game> games, short option)
     {
-        if(option == 0)
+        if(option == LoadDatabaseInfoTask.SYNC_ENUM.ADD_GAMES)
         {
             //Get the list of removed games from the database
             LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-            task.execute((short) 5);
+            task.execute(LoadDatabaseInfoTask.SYNC_ENUM.GET_REMOVED_GAMES);
         }
-        else if(option == 5)
+        else if(option == LoadDatabaseInfoTask.SYNC_ENUM.GET_REMOVED_GAMES)
         {
             List<Game> gamesToRemove = new ArrayList<>();
             for (int i = 0; i < games.size(); i++)
@@ -286,10 +286,10 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             {
                 //Remove the old removed games from the database
                 LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                task.execute((short) 3, gamesToRemove);
+                task.execute(LoadDatabaseInfoTask.SYNC_ENUM.DELETE_GAMES, gamesToRemove);
             }
         }
-        else if(option == 3)
+        else if(option == LoadDatabaseInfoTask.SYNC_ENUM.DELETE_GAMES)
         {
             Button button = (Button) findViewById(R.id.showGameList_btn);
             button.setEnabled(true);
@@ -341,6 +341,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             PlacePicker.IntentBuilder intentBuilder =
                     new PlacePicker.IntentBuilder();
             Intent intent = intentBuilder.build(this);
+
             // Start the intent by requesting a result,
             // identified by a request code.
             startActivityForResult(intent, REQUEST_PLACE_PICKER);
@@ -358,31 +359,31 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     protected void onActivityResult(int requestCode,
                                     int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_PLACE_PICKER
-                && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_PLACE_PICKER) {
+            if( resultCode == Activity.RESULT_OK) {
+                // The user has selected a place. Extract the name and address.
+                final Place place = PlacePicker.getPlace(data, this);
 
-            // The user has selected a place. Extract the name and address.
-            final Place place = PlacePicker.getPlace(data, this);
+                final CharSequence name = place.getName();
+                final CharSequence address = place.getAddress();
+                final LatLng latLng = place.getLatLng();
+                String attributions = PlacePicker.getAttributions(data);
+                if (attributions == null) {
+                    attributions = "";
+                }
 
-            final CharSequence name = place.getName();
-            final CharSequence address = place.getAddress();
-            final LatLng latLng = place.getLatLng();
-            String attributions = PlacePicker.getAttributions(data);
-            if (attributions == null) {
-                attributions = "";
+                Intent showMapIntent = new Intent(MainMenuActivity.this, MapsActivity.class);
+                StoreDetails storeDetails = new StoreDetails(name.toString(),
+                                    address.toString(),
+                                    Html.fromHtml(attributions).toString(),
+                                    latLng);
+                showMapIntent.putExtra("dest", storeDetails);
+                startActivity(showMapIntent);
+
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+                Log.d("PlacePicker", "Failed pick");
             }
-
-            Intent showMapIntent = new Intent(MainMenuActivity.this, MapsActivity.class);
-            StoreDetails storeDetails = new StoreDetails(name.toString(),
-                                address.toString(),
-                                Html.fromHtml(attributions).toString(),
-                                latLng);
-            showMapIntent.putExtra("dest", storeDetails);
-            startActivity(showMapIntent);
-
-        } else if(requestCode == REQUEST_PLACE_PICKER) {
-            super.onActivityResult(requestCode, resultCode, data);
-            Log.d("PlacePicker", "Failed pick");
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
