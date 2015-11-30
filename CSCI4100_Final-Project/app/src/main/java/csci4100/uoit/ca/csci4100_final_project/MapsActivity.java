@@ -46,11 +46,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setupLocationServices();
     }
 
+    final int PERMISSIONS_REQUEST_ACCESS_LOCATION = 410020;
+    private void requestLocationPermissions() {
+        if ((android.os.Build.VERSION.SDK_INT) >= 23 && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Explain to the user why we need to read the contacts
+                Toast.makeText(this, "We kindly request your location.", Toast.LENGTH_SHORT).show();
+            }
+
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_LOCATION);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,@NonNull String permissions[],@NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    updateLocation();
+                } else {
+                    // tell the user that the feature will not work
+                    Toast.makeText(this, Manifest.permission.ACCESS_FINE_LOCATION + " failed", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+        }
+    }
+
     /*
-    Sample data:
-      CN Tower:      43.6426, -79.3871
-      Eiffel Tower:  48.8582,   2.2945
-  */
+     *  Request the GPS if not active
+     *  Otherwise update location
+     */
+    private void setupLocationServices() {
+        requestLocationPermissions();
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            // request that the user install the GPS provider
+            String locationConfig = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
+            Intent enableGPS = new Intent(locationConfig);
+            startActivity(enableGPS);
+        } else {
+            // determine the location
+            updateLocation();
+        }
+    }
+
+    /*
+     *  Set up requirements for the location and find your last known location
+     */
     private void updateLocation() {
         if (((android.os.Build.VERSION.SDK_INT) < 23 && (android.os.Build.VERSION.SDK_INT) >= 19)
                 || checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -77,46 +123,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void setupLocationServices() {
-        requestLocationPermissions();
+    private void showLocationName(Location location) {
+        Log.d("LocationSample", "showLocationName("+location+")");
+        // perform a reverse geocode to get the address
+        if (Geocoder.isPresent()) {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            // request that the user install the GPS provider
-            String locationConfig = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
-            Intent enableGPS = new Intent(locationConfig);
-            startActivity(enableGPS);
-        } else {
-            // determine the location
-            updateLocation();
-        }
-    }
+            try {
+                // reverse geocode from current GPS position
+                List<Address> results = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
-    final int PERMISSIONS_REQUEST_ACCESS_LOCATION = 410020;
-    private void requestLocationPermissions() {
-        if ((android.os.Build.VERSION.SDK_INT) >= 23 && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Explain to the user why we need to read the contacts
-            }
-
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_LOCATION);
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,@NonNull String permissions[],@NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_LOCATION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    updateLocation();
+                if (results.size() > 0) {
+                    latitude = results.get(0).getLatitude();
+                    longitude = results.get(0).getLongitude();
+                    Address match = results.get(0);
+                    String address = match.getAddressLine(0);
+                    setLocation(address);
                 } else {
-                    // tell the user that the feature will not work
+                    Log.d("LocationSample", "No results found while reverse geocoding GPS location");
                 }
-                break;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        } else {
+            Log.d("LocationSample", "No geocoder present");
         }
+    }
+
+    private void setLocation(String location) {
+        Log.d("LocationSample", "setLocation("+location+")");
+        Toast.makeText(this, location, Toast.LENGTH_SHORT).show();
+        setUpMapIfNeeded();
     }
 
     @Override
@@ -132,11 +169,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (mapFragment != null) {
                 mapFragment.getMapAsync(this);
             }
-        }
-        else if(map != null){
-            LatLng position = new LatLng(latitude, longitude);
-            map.addMarker(new MarkerOptions().position(position).title("Search Result"));
-            //map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 13));
         }
     }
 
@@ -171,39 +203,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         Log.d("LocationSample", "onLocationChanged(" + location + ")");
         showLocationName(location);
-    }
-
-    private void showLocationName(Location location) {
-        Log.d("LocationSample", "showLocationName("+location+")");
-        // perform a reverse geocode to get the address
-        if (Geocoder.isPresent()) {
-            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-            try {
-                // reverse geocode from current GPS position
-                List<Address> results = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
-                if (results.size() > 0) {
-                    latitude = results.get(0).getLatitude();
-                    longitude = results.get(0).getLongitude();
-                    Address match = results.get(0);
-                    String address = match.getAddressLine(0);
-                    setLocation(address);
-                } else {
-                    Log.d("LocationSample", "No results found while reverse geocoding GPS location");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.d("LocationSample", "No geocoder present");
-        }
-    }
-
-    private void setLocation(String location) {
-        Log.d("LocationSample", "setLocation("+location+")");
-        Toast.makeText(this, location, Toast.LENGTH_SHORT).show();
-        setUpMapIfNeeded();
     }
 
     @Override

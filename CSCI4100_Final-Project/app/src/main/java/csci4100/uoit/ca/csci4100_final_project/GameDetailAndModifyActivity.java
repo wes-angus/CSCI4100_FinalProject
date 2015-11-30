@@ -3,6 +3,7 @@
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -204,6 +205,8 @@ public class GameDetailAndModifyActivity extends Activity
                     .setData(CalendarContract.Events.CONTENT_URI)
                     .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
                     .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date.getTime())
+                    .putExtra(CalendarContract.Events.DESCRIPTION, game.getDescription())
+                    .putExtra(CalendarContract.Events.EVENT_COLOR, Color.RED)
                     .putExtra(CalendarContract.Events.TITLE, "Release of " + game.getTitle());
             startActivity(intent);
         }
