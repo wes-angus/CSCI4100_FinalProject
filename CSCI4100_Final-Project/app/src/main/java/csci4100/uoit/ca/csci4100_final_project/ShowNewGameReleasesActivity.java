@@ -35,6 +35,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     int scrollPos = 0;
     int gamePositionToModify = 0;
     public static final String parseDatePattern = "EEE, d MMM yyyy";
+    boolean search_error_showing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,6 +62,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         // Save the current list view position
         listView_state = listView.onSaveInstanceState();
         savedInstanceState.putParcelable(L_VIEW_STATE, listView_state);
+        savedInstanceState.putBoolean("search_error_showing", search_error_showing);
     }
 
     @Override
@@ -71,6 +73,17 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
 
         // Restore activity state from saved instance
         listView_state = savedInstanceState.getParcelable(L_VIEW_STATE);
+        search_error_showing = savedInstanceState.getBoolean("search_error_showing", false);
+        if(search_error_showing)
+        {
+            EditText editText = (EditText) findViewById(R.id.searchField);
+            editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+        }
+        else
+        {
+            EditText editText = (EditText) findViewById(R.id.searchField);
+            editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
     @Override
@@ -253,8 +266,8 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         }
     }
 
-    public static void searchGameList(List<Game> games, Activity activity, ListView listView,
-                                      int textFieldID)
+    public static boolean searchGameList(List<Game> games, Activity activity, ListView listView,
+                                         int textFieldID)
     {
         EditText editText = (EditText) activity.findViewById(textFieldID);
         String searchText = editText.getText().toString().toLowerCase();
@@ -311,21 +324,25 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
             }
         }
 
+        boolean search_error_showing;
         if(found)
         {
+            search_error_showing = false;
             editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
             MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
             listView.setSelection(found_pos);
         }
         else
         {
+            search_error_showing = true;
             MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
             editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
         }
+        return search_error_showing;
     }
 
     public void search(View view)
     {
-        searchGameList(games, this, listView, R.id.searchField);
+        search_error_showing = searchGameList(games, this, listView, R.id.searchField);
     }
 }
