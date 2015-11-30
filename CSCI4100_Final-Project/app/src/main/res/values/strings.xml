@@ -76,4 +76,5 @@
     <string name="bought_search_hint">Find Bought Games by Title</string>
     <string name="title_activity_maps">You and Choice</string>
     <string name="find_stores">Find Stores</string>
+    <string name="reset_dialog">This action will clear all of the data save on this phone and download the games currently available in the feed. Therefore any games not currently available in the feed will be removed permanently. Is that okay?</string>
 </resources>

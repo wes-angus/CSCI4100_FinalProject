@@ -280,4 +280,15 @@ public class GameDBHelper extends SQLiteOpenHelper
         //Check if the game was deleted successfully
         return (numRowsAffected == 1);
     }
+
+    public void deleteAllGames()
+    {
+        //Get a connection to the database
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        //Delete all games in the database
+        int numRowsAffected = database.delete(TABLE_NAME, "", new String[] {});
+
+        Log.i("DatabaseAccess", "deleteAllGames():  numRowsAffected: " + numRowsAffected);
+    }
 }

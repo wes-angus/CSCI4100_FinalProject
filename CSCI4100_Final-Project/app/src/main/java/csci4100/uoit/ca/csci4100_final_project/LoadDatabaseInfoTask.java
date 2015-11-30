@@ -107,6 +107,9 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
                 }
                 games = getGames();
                 break;
+            case SYNC_ENUM.DELETE_ALL_GAMES:
+                deleteAllGames();
+                break;
         }
 
         return games;
@@ -155,6 +158,11 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
     private void deleteGame(Game game)
     {
         dbHelper.deleteGame(game.getTitle());
+    }
+
+    private void deleteAllGames()
+    {
+        dbHelper.deleteAllGames();
     }
 
     @Override

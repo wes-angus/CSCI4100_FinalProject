@@ -47,4 +47,13 @@
         android:text="@string/find_stores"
         android:onClick="viewMap"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reset"
+        android:id="@+id/resetBtn"
+        android:onClick="deleteAllConfirm"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

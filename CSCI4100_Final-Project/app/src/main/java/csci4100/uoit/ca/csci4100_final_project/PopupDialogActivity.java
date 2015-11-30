@@ -19,9 +19,17 @@ public class PopupDialogActivity extends Activity
         //Sets the relevant dialog text based on the extras passed to it
         TextView textView = (TextView) findViewById(R.id.confirm_tView);
         boolean bought_checked = getIntent().getBooleanExtra("already_bought", false);
+        boolean resetConfirm = getIntent().getBooleanExtra("want_to_reset", false);
         if(bought_checked)
         {
             textView.setText(getString(R.string.add_to_bought_list_dialog));
+        }
+        else
+        {
+            if(resetConfirm)
+            {
+                textView.setText(getString(R.string.reset_dialog));
+            }
         }
     }
 

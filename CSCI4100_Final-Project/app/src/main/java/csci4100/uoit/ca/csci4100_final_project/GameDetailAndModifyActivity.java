@@ -205,6 +205,7 @@ public class GameDetailAndModifyActivity extends Activity
                     .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
                     .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date.getTime())
                     .putExtra(CalendarContract.Events.TITLE, "Release of " + game.getTitle());
+            MainMenuActivity.playSound(MainMenuActivity.buttonSound1_ID);
             startActivity(intent);
         }
         catch (ParseException e)
