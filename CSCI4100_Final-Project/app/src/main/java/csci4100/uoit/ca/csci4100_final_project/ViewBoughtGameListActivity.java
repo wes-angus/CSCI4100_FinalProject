@@ -4,10 +4,10 @@ package csci4100.uoit.ca.csci4100_final_project;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -39,7 +39,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState)
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState)
     {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -50,7 +50,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState)
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
     {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);

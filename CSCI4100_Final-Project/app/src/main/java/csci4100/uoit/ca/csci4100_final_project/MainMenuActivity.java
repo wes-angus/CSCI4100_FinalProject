@@ -12,6 +12,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -161,7 +162,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState)
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState)
     {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -171,7 +172,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState)
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
     {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);

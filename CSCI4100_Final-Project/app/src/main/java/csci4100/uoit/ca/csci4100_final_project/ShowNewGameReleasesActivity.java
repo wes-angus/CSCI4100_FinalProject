@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +53,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState)
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState)
     {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -63,7 +64,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState)
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
     {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
@@ -165,11 +166,9 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         listView = (ListView) findViewById(R.id.game_listView);
         listView.setAdapter(new GameAdapter(this, games));
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
-            {
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 goToModifyScreen(position);
             }
         });
