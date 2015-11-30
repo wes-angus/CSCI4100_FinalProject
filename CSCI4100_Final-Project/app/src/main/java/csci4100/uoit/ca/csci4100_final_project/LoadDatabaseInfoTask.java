@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Add delete for multiple games, get for bought/removed games
 public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 {
     private DatabaseListener listener = null;
@@ -28,8 +27,9 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         /*
         This variable determines which database function to use
         0 = Add 1 or more games, 1 = get the list of games only, 2 = Update the given game,
-        3 = Delete 1 or more games, 4 = get the list of "bought" games,
-        5 = get the list of recently removed games, 6 = get the list of games that may have expired
+        3 = Delete 1 or more games only, 4 = get the list of "bought" games,
+        5 = get the list of recently removed games, 6 = get the list of games that may have expired,
+        7 = Delete 1 or more games and get the list of games
         */
         option = (short) params[0];
         List<Game> games = new ArrayList<>();
@@ -66,7 +66,6 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
                 {
                     deleteGame(game);
                 }
-                games = getGames();
                 break;
             case 4:
                 games = getBoughtGames();
@@ -76,6 +75,13 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
                 break;
             case 6:
                 games = getPossiblyExpiredGames();
+                break;
+            case 7:
+                for (Game game : games)
+                {
+                    deleteGame(game);
+                }
+                games = getGames();
                 break;
         }
 
@@ -112,7 +118,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
 
     private List<Game> getPossiblyExpiredGames()
     {
-        return dbHelper.getPossiblyExpiredGames();
+        return dbHelper.getAllPossiblyExpiredGames();
     }
 
     private void deleteGame(Game game)

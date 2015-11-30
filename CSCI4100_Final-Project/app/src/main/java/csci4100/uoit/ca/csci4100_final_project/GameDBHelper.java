@@ -12,7 +12,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Sort list of games from the database by their "whenWillBuy" values
 public class GameDBHelper extends SQLiteOpenHelper
 {
     public static final int DATABASE_VERSION = 2;
@@ -129,7 +128,9 @@ public class GameDBHelper extends SQLiteOpenHelper
         SQLiteDatabase database = this.getReadableDatabase();
 
         String whereClause = columns[4] + " = ?";
-        String[] whereArgs = new String[]{ context.getString(R.string.bought) };
+        String[] whenWillBuy_values = context.getResources().getStringArray(R.array.options);
+        String whereArg1 = whenWillBuy_values[whenWillBuy_values.length - 1];
+        String[] whereArgs = new String[]{ whereArg1 };
         Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", "");
         cursor.moveToFirst();
         //Continue adding games to the list while more are found
@@ -146,13 +147,13 @@ public class GameDBHelper extends SQLiteOpenHelper
             cursor.moveToNext();
         }
         cursor.close();
-        Log.i("DatabaseAccess", "getAllBoughtGames():  num: " + games.size());
+        Log.i("DatabaseAccess", "getAllRemovedGames():  num: " + games.size());
 
         return games;
     }
 
     //Query all games that may have expired in the database
-    public List<Game> getPossiblyExpiredGames()
+    public List<Game> getAllPossiblyExpiredGames()
     {
         List<Game> games = new ArrayList<>();
 
@@ -160,13 +161,13 @@ public class GameDBHelper extends SQLiteOpenHelper
         SQLiteDatabase database = this.getReadableDatabase();
 
         String whereClause = columns[4] + " = ? OR " + columns[4] + " = ? OR " + columns[4] +
-                " = ? OR " + columns[4] + " = ?";
+                " = ? OR " + columns[4] + " = ? OR " + columns[4] + " = ?";
         String[] whenWillBuy_values = context.getResources().getStringArray(R.array.options);
         String whereArg1 = whenWillBuy_values[0];
         String whereArg2 = whenWillBuy_values[whenWillBuy_values.length - 2];
         String whereArg3 = whenWillBuy_values[whenWillBuy_values.length - 3];
         String whereArg4 = whenWillBuy_values[whenWillBuy_values.length - 4];
-        String[] whereArgs = new String[]{ whereArg1, whereArg2, whereArg3, whereArg4 };
+        String[] whereArgs = new String[]{ whereArg1, whereArg2, whereArg3, whereArg4, "" };
         Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", "");
         cursor.moveToFirst();
         //Continue adding games to the list while more are found
@@ -183,7 +184,7 @@ public class GameDBHelper extends SQLiteOpenHelper
             cursor.moveToNext();
         }
         cursor.close();
-        Log.i("DatabaseAccess", "getAllGames():  num: " + games.size());
+        Log.i("DatabaseAccess", "getAllPossiblyRemovedGames():  num: " + games.size());
 
         return games;
     }
@@ -200,8 +201,9 @@ public class GameDBHelper extends SQLiteOpenHelper
         String[] whenWillBuy_values = context.getResources().getStringArray(R.array.options);
         String whereArg1 = whenWillBuy_values[whenWillBuy_values.length - 1];
         String[] whereArgs = new String[]{ whereArg1, context.getString(R.string.bought) };
-        String orderBy = columns[4] + " DESC";
-        Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", orderBy);
+        String orderBy = columns[0] + " ASC";
+        Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "",
+                orderBy);
         cursor.moveToFirst();
         //Continue adding games to the list while more are found
         while (!cursor.isAfterLast())

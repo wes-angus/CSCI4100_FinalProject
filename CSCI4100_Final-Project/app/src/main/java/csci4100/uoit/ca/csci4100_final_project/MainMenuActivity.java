@@ -252,11 +252,11 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             List<Game> gamesToRemove = new ArrayList<>();
             for (int i = 0; i < games.size(); i++)
             {
-                if(downloadedGames.contains(games.get(i).getTitle()))
-                {
-                    continue;
-                }
-                else if(i == downloadedGames.size() - 1)
+                /*
+                If the removed game is not found in the feed,
+                add it to a list of games to remove from the database
+                */
+                if(!downloadedGames.contains(games.get(i).getTitle()))
                 {
                     gamesToRemove.add(games.get(i));
                 }
@@ -308,10 +308,8 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
     public void viewBoughtList(View view)
     {
-        /*
         Intent intent = new Intent(this, ViewBoughtGameListActivity.class);
         playSound(buttonSound1_ID);
         startActivity(intent);
-        */
     }
 }

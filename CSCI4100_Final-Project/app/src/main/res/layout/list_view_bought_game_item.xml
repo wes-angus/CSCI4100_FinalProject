@@ -10,9 +10,22 @@
     android:paddingBottom="@dimen/activity_vertical_margin">
 
     <TextView
-        android:id="@+id/lblBoughtGame"
+        android:id="@+id/lblBoughtTitle"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/lblBoughtDesc"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/lblBoughtMoreDesc"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="15dp"
+        android:textStyle="bold" />
 
 </LinearLayout>

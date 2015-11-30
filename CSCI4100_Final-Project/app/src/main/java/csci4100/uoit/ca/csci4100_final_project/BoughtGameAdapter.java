@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BoughtGameAdapter extends BaseAdapter {
@@ -48,9 +47,15 @@ public class BoughtGameAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_view_bought_game_item, parent, false);
         }
 
-        // populate the views with the data from story
-        TextView lblTitle = (TextView)convertView.findViewById(R.id.lblBoughtGame);
+        //Populate the views with the data from the "new game" feed
+        TextView lblTitle = (TextView)convertView.findViewById(R.id.lblBoughtTitle);
         lblTitle.setText(gameToDisplay.getTitle());
+
+        TextView lblDesc = (TextView)convertView.findViewById(R.id.lblBoughtDesc);
+        lblDesc.setText(gameToDisplay.getDescription());
+
+        TextView lblMoreDesc = (TextView)convertView.findViewById(R.id.lblBoughtMoreDesc);
+        lblMoreDesc.setText(R.string.bought_item_click_instructions);
 
         return convertView;
     }

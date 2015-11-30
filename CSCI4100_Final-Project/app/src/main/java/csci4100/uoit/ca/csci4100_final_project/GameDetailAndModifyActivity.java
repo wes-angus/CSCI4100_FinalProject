@@ -2,6 +2,7 @@
 
 package csci4100.uoit.ca.csci4100_final_project;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -117,12 +118,17 @@ public class GameDetailAndModifyActivity extends Activity
         finish();
     }
 
-    public void openGameLink(View view)
+    public static void startGameLinkActivity(Game game, Activity activity)
     {
         String url = game.getLink();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
-        startActivity(intent);
+        activity.startActivity(intent);
+    }
+
+    public void openGameLink(View view)
+    {
+        startGameLinkActivity(game, this);
     }
 
     @Override

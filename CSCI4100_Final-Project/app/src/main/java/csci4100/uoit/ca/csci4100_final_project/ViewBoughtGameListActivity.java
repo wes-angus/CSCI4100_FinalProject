@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.os.Parcelable;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
 {
     ListView listView;
     private Parcelable listView_state = null;
+    public static final String B_L_VIEW_STATE = "bought_listView_prevState";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,6 +30,38 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
         task.execute((short) 4);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState)
+    {
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+
+        // Save the current list view position
+        listView_state = listView.onSaveInstanceState();
+        savedInstanceState.putParcelable(B_L_VIEW_STATE, listView_state);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore activity state from saved instance
+        listView_state = savedInstanceState.getParcelable(B_L_VIEW_STATE);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume(); // Always call the superclass method first
+
+        if(listView_state != null)
+        {
+            listView.onRestoreInstanceState(listView_state);
+        }
+    }
+
     private void populateList(ListView listView, List<Game> data)
     {
         listView.setAdapter(new BoughtGameAdapter(this, data));
@@ -39,8 +73,27 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
     }
 
     @Override
-    public void syncGames(List<Game> games, short option)
+    public void syncGames(final List<Game> games, short option)
     {
-        populateList(listView, games);
+        if(!games.isEmpty())
+        {
+            listView = (ListView) findViewById(R.id.boughtGames_listView);
+            populateList(listView, games);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+            {
+                @Override
+                public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+                {
+                    GameDetailAndModifyActivity.startGameLinkActivity(games.get(position),
+                            ViewBoughtGameListActivity.this);
+                }
+            });
+
+            if(listView_state != null)
+            {
+                listView.onRestoreInstanceState(listView_state);
+            }
+        }
     }
 }

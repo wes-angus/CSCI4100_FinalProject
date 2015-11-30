@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 //TODO: Get list of unlikely to buy games whose release dates are a week past
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
@@ -103,14 +104,24 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     {
         if(option > 0 && option < 4)
         {
-            if(!(games.isEmpty()))
+            if(!games.isEmpty())
             {
                 //TODO: Remove games that've expired from the database
+                this.games = games;
                 //getExpiredGames();
 
-                populateList(listView, games);
+                /*
+                Avoid going out of bounds when the number of items from the query
+                decreases after the database is updated (when the "whenWillBuy"
+                value is changed to "Will Never Buy It" or "Bought"
+                */
+                if(scrollPos > (games.size() - 1))
+                {
+                    scrollPos = games.size() - 1;
+                }
 
-                this.games = games;
+                listView = (ListView) findViewById(R.id.game_listView);
+                populateList(listView, games);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                 {
@@ -132,10 +143,6 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 listView.setSelection(scrollPos);
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
             }
-            else if(option == 3)
-            {
-                Toast.makeText(this, R.string.del_success, Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -155,14 +162,14 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         for (Game game : games)
         {
             Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy", Locale.US);
             Date curDate = calendar.getTime();
             try
             {
                 Date date = dateFormat.parse(game.getReleaseDate());
                 long diffTime = curDate.getTime() - date.getTime();
                 long diffDays = (long) ((double) diffTime / (double)(1000 * 60 * 60 * 24));
-                if(diffDays > 7)
+                if(diffDays > 8)
                 {
                     expiredGames.add(game);
                 }
