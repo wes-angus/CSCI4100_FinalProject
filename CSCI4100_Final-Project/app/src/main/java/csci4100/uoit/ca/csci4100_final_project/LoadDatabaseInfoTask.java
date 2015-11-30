@@ -54,7 +54,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         List<Game> games = new ArrayList<>();
         Game singleGame = null;
 
-        if(params[1] != null) {
+        if(params.length > 1 && params[1] != null) {
             //If you are adding or deleting multiple games, 2nd argument is a list of Game objects
             if (option == SYNC_ENUM.ADD_GAMES
                     || option == SYNC_ENUM.DELETE_GAMES

@@ -44,8 +44,7 @@ TODO: Maybe add broadcast receiver for headphones being plugged/unplugged
 TODO: Add button to clear all data from the database
 */
 //Main menu activity from which the other activities are accessed
-public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
-{
+public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener, GoogleApiClient.ConnectionCallbacks {
     private static final String prefs_filename = "loadOnce";
     private String url = "";
     private static SoundPool soundPool = null;
@@ -72,7 +71,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-//                .addConnectionCallbacks(this)
+                .addConnectionCallbacks(this)
 //                .addOnConnectionFailedListener(this)
                 .build();
         
@@ -364,22 +363,23 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     final int REQUEST_PLACE_PICKER = 1;
     public void onPickButtonClick(View v) {
         // Construct an intent for the place picker
-        try {
-            PlacePicker.IntentBuilder intentBuilder =
-                    new PlacePicker.IntentBuilder();
-            Intent intent = intentBuilder.build(this);
+        if(mGoogleApiClient.isConnected())
+            try {
+                PlacePicker.IntentBuilder intentBuilder =
+                        new PlacePicker.IntentBuilder();
+                Intent intent = intentBuilder.build(this);
 
-            // Start the intent by requesting a result,
-            // identified by a request code.
-            startActivityForResult(intent, REQUEST_PLACE_PICKER);
+                // Start the intent by requesting a result,
+                // identified by a request code.
+                startActivityForResult(intent, REQUEST_PLACE_PICKER);
 
-        } catch (GooglePlayServicesRepairableException e) {
-            // ...
-            Log.e("PlacePicker", "repair");
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // ...
-            Log.e("PlacePicker", "play services not available");
-        }
+            } catch (GooglePlayServicesRepairableException e) {
+                // ...
+                Log.e("PlacePicker", "repair");
+            } catch (GooglePlayServicesNotAvailableException e) {
+                // ...
+                Log.e("PlacePicker", "play services not available");
+            }
     }
 
     @Override
@@ -427,4 +427,13 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         super.onStop();
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        (findViewById(R.id.findStores_btn)).setEnabled(true);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        (findViewById(R.id.findStores_btn)).setEnabled(false);
+    }
 }

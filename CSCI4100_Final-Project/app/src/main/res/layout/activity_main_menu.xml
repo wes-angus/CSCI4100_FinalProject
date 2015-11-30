@@ -44,6 +44,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/findStores_btn"
+        android:enabled="false"
         android:text="@string/find_stores"
         android:onClick="viewMap"/>
 
