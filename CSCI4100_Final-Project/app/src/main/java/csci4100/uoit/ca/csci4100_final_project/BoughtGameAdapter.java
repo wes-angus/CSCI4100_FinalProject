@@ -12,11 +12,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class GameAdapter extends BaseAdapter {
+public class BoughtGameAdapter extends BaseAdapter {
     private Context context;
     private List<Game> data;
 
-    public GameAdapter(Context context, List<Game> data) {
+    public BoughtGameAdapter(Context context, List<Game> data) {
         this.data = data;
         this.context = context;
     }
@@ -37,32 +37,25 @@ public class GameAdapter extends BaseAdapter {
     {
         Game gameToDisplay = data.get(position);
 
-        Log.d("GameAdapter", "Game:");
-        Log.d("GameAdapter", "  Title:   "+ gameToDisplay.getTitle());
-        Log.d("GameAdapter", "  Release Date:  "+ gameToDisplay.getReleaseDate());
-        Log.d("GameAdapter", "  Content: "+ gameToDisplay.getDescription());
+        Log.d("BoughtGameAdapter", "Game: "+ gameToDisplay);
 
         if (convertView == null)
         {
             // create the layout
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_view_game_item, parent, false);
+            convertView = inflater.inflate(R.layout.list_view_bought_game_item, parent, false);
         }
 
         //Populate the views with the data from the "new game" feed
-        TextView lblTitle = (TextView)convertView.findViewById(R.id.lblTitle);
+        TextView lblTitle = (TextView)convertView.findViewById(R.id.lblBoughtTitle);
         lblTitle.setText(gameToDisplay.getTitle());
 
-        TextView lblReleaseDate = (TextView)convertView.findViewById(R.id.lblReleaseDate);
-        lblReleaseDate.setText(gameToDisplay.getReleaseDate());
+        TextView lblDesc = (TextView)convertView.findViewById(R.id.lblBoughtDesc);
+        lblDesc.setText(gameToDisplay.getDescription());
 
-        TextView lblWhenWillBuy = (TextView)convertView.findViewById(R.id.lblWhenWillBuy);
-        lblWhenWillBuy.setText(R.string.will_i_buy);
-        lblWhenWillBuy.setText(lblWhenWillBuy.getText() + "\n" + gameToDisplay.getWhenWillBuy());
-
-        TextView lblDesc = (TextView)convertView.findViewById(R.id.lblDesc);
-        lblDesc.setText(R.string.item_click_instructions);
+        TextView lblMoreDesc = (TextView)convertView.findViewById(R.id.lblBoughtMoreDesc);
+        lblMoreDesc.setText(R.string.bought_item_click_instructions);
 
         return convertView;
     }

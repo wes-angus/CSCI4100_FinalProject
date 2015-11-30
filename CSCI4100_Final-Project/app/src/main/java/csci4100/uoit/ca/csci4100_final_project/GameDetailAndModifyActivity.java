@@ -6,15 +6,25 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.provider.CalendarContract;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class GameDetailAndModifyActivity extends Activity
 {
+    public static final int DELETE_DIALOG = 13;
+
     Game game;
     Spinner spinner;
+    boolean bought = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -25,7 +35,8 @@ public class GameDetailAndModifyActivity extends Activity
         Bundle bundle = getIntent().getExtras();
         game = bundle.getParcelable("game");
         spinner = (Spinner) findViewById(R.id.willBuy_spinner);
-        if(game != null) {
+        if(game != null)
+        {
             populateSpinner(spinner, R.array.options, game.getWhenWillBuy());
             showGameInfo(game);
         }
@@ -75,26 +86,97 @@ public class GameDetailAndModifyActivity extends Activity
 
     public void saveWillBuyProperty(View view)
     {
-        Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
-        intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
-        intent.putExtra("game_position", getIntent().getIntExtra("game_position", 0));
-        setResult(Activity.RESULT_OK, intent);
-        MainMenuActivity.soundPool.play(MainMenuActivity.saveSound_ID, 1, 1, 3, 0, 1);
-        finish();
+        String[] whenWillBuyValues = getResources().getStringArray(R.array.options);
+        String neverWillBuy = whenWillBuyValues[whenWillBuyValues.length - 1];
+        if(spinner.getSelectedItem().toString().equals(neverWillBuy))
+        {
+            Intent c_intent1 = new Intent(this, PopupDialogActivity.class);
+            bought = false;
+            c_intent1.putExtra("already_bought", false);
+            startActivityForResult(c_intent1, DELETE_DIALOG);
+        }
+        else
+        {
+            CheckBox checkBox = (CheckBox) findViewById(R.id.cBox_bought);
+            if (checkBox.isChecked())
+            {
+                Intent c_intent2 = new Intent(this, PopupDialogActivity.class);
+                bought = true;
+                c_intent2.putExtra("already_bought", true);
+                startActivityForResult(c_intent2, DELETE_DIALOG);
+            }
+            else
+            {
+                Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
+                intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
+                setResult(Activity.RESULT_OK, intent);
+                MainMenuActivity.playSound(MainMenuActivity.confirmSound_ID);
+                finish();
+            }
+        }
     }
 
     public void cancelModify(View view)
     {
         setResult(Activity.RESULT_CANCELED);
-        MainMenuActivity.soundPool.play(MainMenuActivity.cancelSound_ID, 1, 1, 2, 0, 1);
+        MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
         finish();
+    }
+
+    public static void startGameLinkActivity(Game game, Activity activity)
+    {
+        String url = game.getLink();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
+        activity.startActivity(intent);
     }
 
     public void openGameLink(View view)
     {
-        String url = game.getLink();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        MainMenuActivity.soundPool.play(MainMenuActivity.buttonSound1_ID, 1, 1, 0, 0, 1);
-        startActivity(intent);
+        startGameLinkActivity(game, this);
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent result)
+    {
+        //Gets a result back from PopupDialogActivity
+        super.onActivityResult(reqCode, resCode, result);
+        if (resCode == Activity.RESULT_OK)
+        {
+            if(reqCode == DELETE_DIALOG)
+            {
+                Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
+                if(!bought)
+                {
+                    intent.putExtra("when_will_buy", spinner.getSelectedItem().toString());
+                }
+                else
+                {
+                    intent.putExtra("when_will_buy", getString(R.string.bought));
+                }
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
+    }
+
+    public void createCalendarEvent(View view)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                ShowNewGameReleasesActivity.parseDatePattern, Locale.US);
+        try
+        {
+            Date date = dateFormat.parse(game.getReleaseDate());
+            Intent intent = new Intent(Intent.ACTION_INSERT)
+                    .setData(CalendarContract.Events.CONTENT_URI)
+                    .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date.getTime())
+                    .putExtra(CalendarContract.Events.TITLE, "Release of " + game.getTitle());
+            startActivity(intent);
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

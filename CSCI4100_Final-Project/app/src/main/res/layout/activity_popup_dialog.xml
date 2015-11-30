@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="csci4100.uoit.ca.csci4100_final_project.PopupDialogActivity">
+
+    <TextView
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:text="@string/never_will_buy_dialog"
+        android:id="@+id/confirm_tView"
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/yes"
+        android:id="@+id/yesBtn"
+        android:layout_marginLeft="45dp"
+        android:layout_marginStart="45dp"
+        android:onClick="yesClick"
+        android:layout_below="@+id/confirm_tView"
+        android:layout_alignLeft="@+id/confirm_tView"
+        android:layout_alignStart="@+id/confirm_tView"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no"
+        android:id="@+id/noBtn"
+        android:layout_marginRight="45dp"
+        android:layout_marginEnd="45dp"
+        android:onClick="noClick"
+        android:layout_alignTop="@+id/yesBtn"
+        android:layout_alignRight="@+id/confirm_tView"
+        android:layout_alignEnd="@+id/confirm_tView" />
+
+</RelativeLayout>

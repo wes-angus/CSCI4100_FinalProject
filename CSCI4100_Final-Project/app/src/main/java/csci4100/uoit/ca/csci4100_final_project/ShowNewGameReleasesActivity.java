@@ -3,31 +3,37 @@
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ShowNewGameReleasesActivity extends Activity implements DatabaseListener
 {
     public static final int MODIFY_GAME = 10;
     public static final String L_VIEW_STATE = "listView_prevState";
-    ArrayList<Game> games = new ArrayList<>();
+    List<Game> games = new ArrayList<>();
     ListView listView;
     private Parcelable listView_state = null;
     int scrollPos = 0;
+    int gamePositionToModify = 0;
+    public static final String parseDatePattern = "EEE, d MMM yyyy";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -36,6 +42,9 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         setContentView(R.layout.activity_show_new_game_releases);
 
         listView = (ListView) findViewById(R.id.game_listView);
+
+        EditText editText = (EditText) findViewById(R.id.searchField);
+        editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
 
         //Gets the list of games from the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
@@ -97,42 +106,109 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     }
 
     @Override
-    public void syncGames(final ArrayList<Game> games, short option)
+    public void syncGames(final List<Game> games, short option)
     {
-        if(option == 1 || option == 2)
+        if(option == 1 || option == 2 || option == 7)
         {
-            if(!(games.isEmpty()))
+            if(!games.isEmpty())
             {
-                listView = (ListView) findViewById(R.id.game_listView);
-                populateList(listView, games);
-
                 this.games = games;
 
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                if(option == 1)
                 {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
-                    {
-                        goToModifyScreen(position);
-                    }
-                });
-
-                if(listView_state != null)
+                    //Gets the list of games that may have expired from the database
+                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this,
+                            getApplicationContext());
+                    task.execute((short) 6);
+                }
+                else
                 {
-                    listView.onRestoreInstanceState(listView_state);
+                    showGameList();
                 }
             }
 
-            if (option == 2) {
+            if (option == 2)
+            {
                 listView.setSelection(scrollPos);
                 Toast.makeText(this, R.string.mod_success, Toast.LENGTH_SHORT).show();
             }
         }
+        else if(option == 6)
+        {
+            List<Game> expiredGames = getExpiredGames(games);
+
+            if(!expiredGames.isEmpty())
+            {
+                //Removes the expired games from the database
+                LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                task.execute((short) 7, expiredGames);
+            }
+            else
+            {
+                showGameList();
+            }
+        }
     }
 
-    private void populateList(ListView listView, List<Game> data)
+    private void showGameList()
     {
-        listView.setAdapter(new GameAdapter(this, data));
+        /*
+        Avoid going out of bounds when the number of items from the query
+        decreases after the database is updated (when the "whenWillBuy"
+        value is changed to "Will Never Buy It" or "Bought"
+        */
+        if(scrollPos > (games.size() - 1))
+        {
+            scrollPos = games.size() - 1;
+        }
+
+        listView = (ListView) findViewById(R.id.game_listView);
+        listView.setAdapter(new GameAdapter(this, games));
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+            {
+                goToModifyScreen(position);
+            }
+        });
+
+        if(listView_state != null)
+        {
+            listView.onRestoreInstanceState(listView_state);
+        }
+    }
+
+    private List<Game> getExpiredGames(List<Game> possiblyExpiredGames)
+    {
+        List<Game> expiredGames = new ArrayList<>();
+        /*
+        Checks the date for each game in the list of games given to it (the games that
+        the user is unlikely to buy), and if the date is more than a week past, the
+        game is added to a list of games that will be removed from the database
+        */
+        for (Game game : possiblyExpiredGames)
+        {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(parseDatePattern, Locale.US);
+            Date curDate = calendar.getTime();
+            try
+            {
+                Date date = dateFormat.parse(game.getReleaseDate());
+                long diffTime = curDate.getTime() - date.getTime();
+                long diffDays = (long) ((double) diffTime / (double) (1000 * 60 * 60 * 24));
+                if(diffDays > 7)
+                {
+                    expiredGames.add(game);
+                }
+            }
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return expiredGames;
     }
 
     public void goToModifyScreen(int gamePosition)
@@ -141,41 +217,116 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         Bundle gamesBundle = new Bundle();
         gamesBundle.putParcelable("game", games.get(gamePosition));
         intent.putExtras(gamesBundle);
-        intent.putExtra("game_position", gamePosition);
-        MainMenuActivity.soundPool.play(MainMenuActivity.itemClickSound_ID, 1, 1, 4, 0, 1);
+        gamePositionToModify = gamePosition;
+        MainMenuActivity.playSound(MainMenuActivity.itemClickSound_ID);
         startActivityForResult(intent, MODIFY_GAME);
     }
 
     public void backToMenu(View view)
     {
-        MainMenuActivity.soundPool.play(MainMenuActivity.buttonSound1_ID, 1, 1, 0, 0, 1);
-        finish();
+        AboutActivity.backToPrevActivity(this);
     }
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent result)
     {
-        //Gets a result back from the AskQuestion activity
+        //Gets a result back from GameDetailAndModifyActivity
         super.onActivityResult(reqCode, resCode, result);
         if (resCode == Activity.RESULT_OK)
         {
             if(reqCode == MODIFY_GAME)
             {
+                Game oldGame = games.get(gamePositionToModify);
                 /*
                 Updates the "willBuy" property of the game that was selected in the database
                 and gets the updated list of games to update the ListView.
                 */
-                int gamePosition = result.getIntExtra("game_position", 0);
-                Game receivedGame = games.get(gamePosition);
                 String new_whenWillBuy = result.getStringExtra("when_will_buy");
-                if(!receivedGame.getWhenWillBuy().equals(new_whenWillBuy))
+                if(!oldGame.getWhenWillBuy().equals(new_whenWillBuy))
                 {
-                    receivedGame.setWhenWillBuy(new_whenWillBuy);
-                    scrollPos = gamePosition;
-                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
-                    task.execute((short) 2, receivedGame);
+                    oldGame.setWhenWillBuy(new_whenWillBuy);
+                    scrollPos = gamePositionToModify;
+                    LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this,
+                            getApplicationContext());
+                    task.execute((short) 2, oldGame);
                 }
             }
         }
+    }
+
+    public static void searchGameList(List<Game> games, Activity activity, ListView listView,
+                                      int textFieldID)
+    {
+        EditText editText = (EditText) activity.findViewById(textFieldID);
+        String searchText = editText.getText().toString().toLowerCase();
+        String[] searchTerms = searchText.split(" ");
+        boolean[] foundTerms = new boolean[searchTerms.length];
+        int found_pos = 0;
+        boolean found = true;
+        for (int i = 0; i < foundTerms.length; i++)
+        {
+            foundTerms[i] = false;
+        }
+
+        gameLoop:
+        for (int i = 0; i < games.size(); i++)
+        {
+            //Initialize values for the current game
+            found = true;
+            for (int index = 0; index < foundTerms.length; index++)
+            {
+                foundTerms[index] = false;
+            }
+            String title = games.get(i).getTitle().toLowerCase();
+            for (int j = 0; j < searchTerms.length; j++)
+            {
+                //Check if the individual search term is contained in the ti
+                if(title.contains(searchTerms[j]))
+                {
+                    foundTerms[j] = true;
+                    if(j == searchTerms.length - 1)
+                    {
+                        for (boolean foundTerm : foundTerms)
+                        {
+                            if(!foundTerm)
+                            {
+                                //If one of the search terms doesn't
+                                //match, then the item wasn't found
+                                found = false;
+                                break;
+                            }
+                        }
+                        //If all search terms match...
+                        if(found)
+                        {
+                            //...exit the game loop and set the position to move the ListView to
+                             found_pos = i;
+                            break gameLoop;
+                        }
+                    }
+                }
+                if(i == games.size() - 1 && j == searchTerms.length - 1)
+                {
+                    found = false;
+                }
+            }
+        }
+
+        if(found)
+        {
+            editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
+            MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
+            listView.setSelection(found_pos);
+        }
+        else
+        {
+            MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
+            editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+        }
+    }
+
+    public void search(View view)
+    {
+        searchGameList(games, this, listView, R.id.searchField);
     }
 }

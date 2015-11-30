@@ -1,4 +1,5 @@
-// Authors: Wesley Angus, Montgomery Alban
+//Authors: Wesley Angus & Montgomery Alban
+
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.annotation.SuppressLint;
@@ -28,10 +29,15 @@ public class AboutActivity extends Activity
         textView.setText(text, TextView.BufferType.SPANNABLE);
     }
 
+    public static void backToPrevActivity(Activity activity)
+    {
+        MainMenuActivity.playSound(MainMenuActivity.buttonSound1_ID);
+        activity.finish();
+    }
+
     public void backToMenu(View view)
     {
-        MainMenuActivity.soundPool.play(MainMenuActivity.buttonSound1_ID, 1, 1, 0, 0, 1);
-        finish();
+        backToPrevActivity(this);
     }
 
     // class for building the about
