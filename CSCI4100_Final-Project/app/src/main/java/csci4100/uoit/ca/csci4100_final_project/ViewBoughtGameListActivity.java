@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
+//Activity for displaying the list of bought games in a ListView
 public class ViewBoughtGameListActivity extends Activity implements DatabaseListener
 {
     ListView listView;
@@ -30,6 +31,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
 
         listView = (ListView) findViewById(R.id.boughtGames_listView);
 
+        //Show the normal background of the search bar
         EditText editText = (EditText) findViewById(R.id.bought_searchField);
         editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
 
@@ -44,7 +46,7 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
 
-        // Save the current list view position
+        // Save the current list view state
         listView_state = listView.onSaveInstanceState();
         savedInstanceState.putParcelable(B_L_VIEW_STATE, listView_state);
         savedInstanceState.putBoolean("bought_search_error_showing", search_error_showing);
@@ -56,16 +58,22 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
 
-        // Restore activity state from saved instance
+        //Restores the previous list view state
         listView_state = savedInstanceState.getParcelable(B_L_VIEW_STATE);
+        /*
+        Restores the search bar background colour state and sets the search bar's
+        background colour to make sure it's maintained when rotating the phone
+        */
         search_error_showing = savedInstanceState.getBoolean("bought_search_error_showing", false);
         if(search_error_showing)
         {
+            //Show the "errored" background of the search bar
             EditText editText = (EditText) findViewById(R.id.bought_searchField);
             editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
         }
         else
         {
+            //Show the normal background of the search bar
             EditText editText = (EditText) findViewById(R.id.bought_searchField);
             editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
         }
@@ -76,12 +84,14 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
     {
         super.onResume(); // Always call the superclass method first
 
+        //Restores the previous list view state
         if(listView_state != null)
         {
             listView.onRestoreInstanceState(listView_state);
         }
     }
 
+    //Displays the bought games received from the database in the list view
     private void populateList(ListView listView, List<Game> data)
     {
         listView.setAdapter(new BoughtGameAdapter(this, data));

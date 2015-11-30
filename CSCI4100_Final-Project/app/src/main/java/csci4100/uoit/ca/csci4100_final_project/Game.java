@@ -5,15 +5,17 @@ package csci4100.uoit.ca.csci4100_final_project;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+//Class to store info about a game, downloaded from an RSS feed
 public class Game implements Parcelable
 {
     private String title;
     private String releaseDate;
     private String description;
-    private String link;
-    private String whenWillBuy;
+    private String link; //Link to the game on the website hosting the feed
+    private String whenWillBuy; //Value representing when (and if) the user wishes to buy the game
 
-    public Game(String title, String releaseDate, String description, String link) {
+    public Game(String title, String releaseDate, String description, String link)
+    {
         this.title = title;
         this.releaseDate = releaseDate;
         this.description = description;
@@ -50,6 +52,7 @@ public class Game implements Parcelable
         return 0;
     }
 
+    //Write the members variables to a parcel to enable sending the class via intents
     @Override
     public void writeToParcel(Parcel out, int flags)
     {
@@ -73,6 +76,7 @@ public class Game implements Parcelable
         }
     };
 
+    //Read the members variables from a parcel
     private Game(Parcel in)
     {
         title = in.readString();

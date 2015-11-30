@@ -36,6 +36,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/*
+TODO: Maybe improve search more
+TODO: Add more comments
+TODO: Maybe add broadcast receiver for headphones being plugged/unplugged
+TODO: Add button to clear all data from the database
+*/
+//Main menu activity from which the other activities are accessed
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener
 {
     private static final String prefs_filename = "loadOnce";
@@ -70,7 +77,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         
         if(url.isEmpty())
         {
-            url = "http://www." + getString(R.string.reference_feed_url);
+            url = "http://www." + getString(R.string.reference_feed_url);//Url for the feed to parse
         }
         if(!added)
         {
@@ -87,6 +94,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         AssetFileDescriptor fd5;
         soundLoaded = new HashMap<>();
 
+        //Checks the android version to use the correct version of the SoundPool constructor
         if((android.os.Build.VERSION.SDK_INT) >= 21) // Checked sdk value, not an error
         {
             SoundPool.Builder builder = new SoundPool.Builder();
@@ -114,6 +122,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         try
         {
+            //Open the sound files and load the sounds
             fd1 = assetManager.openFd("retro_beep.wav");
             fd2 = assetManager.openFd("laser-shot-silenced.wav");
             fd3 = assetManager.openFd("item_beep.wav");
@@ -140,6 +149,8 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
     private void setSoundLoadedListener()
     {
+        //Once the sounds are loaded, save the soundLoaded value to
+        //the map so the sound only plays if it has finished loading
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             //Only play sound after it has loaded
             @Override
@@ -163,20 +174,22 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState)
     {
-        // Always call the superclass so it can save the view hierarchy state
+        //Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
 
-        // Save the current activity state
+        //Save the state of adding games to the database so the feed is not
+        //downloaded every time the user navigates back to the main menu
         savedInstanceState.putBoolean("added", added);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState)
     {
-        // Always call the superclass so it can restore the view hierarchy
+        //Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
 
-        // Restore activity state from saved instance
+        //Restore the state of adding games to the database so the feed is not
+        //downloaded every time the user navigates back to the main menu
         savedInstanceState.getBoolean("added", false);
     }
 
@@ -190,6 +203,8 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
+        //Resets the downloading state so that it downloads
+        //the feed next time you start up the application
         editor.putBoolean("added", false);
         editor.apply();
     }
@@ -201,6 +216,8 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
+        //Save the state of adding games to the database so the feed is not
+        //downloaded every time the user navigates back to the main menu
         editor.putBoolean("added", added);
         editor.apply();
     }
@@ -211,6 +228,8 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         super.onResume();
 
         SharedPreferences prefs = getSharedPreferences(prefs_filename, Activity.MODE_PRIVATE);
+        //Restore the state of adding games to the database so the feed is not
+        //downloaded every time the user navigates back to the main menu
         added = prefs.getBoolean("added", false);
     }
 
@@ -254,13 +273,13 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     @Override
     public void syncGames(List<Game> games, short option)
     {
-        if(option == 0)
+        if(option == 0) //Returns after items are added to the database
         {
             //Get the list of removed games from the database
             LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
             task.execute((short) 5);
         }
-        else if(option == 5)
+        else if(option == 5) //Returns after the list of removed games is obtained
         {
             List<Game> gamesToRemove = new ArrayList<>();
             for (int i = 0; i < games.size(); i++)
@@ -288,15 +307,18 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
                 task.execute((short) 3, gamesToRemove);
             }
         }
+        //Returns after some/all of the removed games are deleted from the database
         else if(option == 3)
         {
+            //Enables the button to let you view the list
             Button button = (Button) findViewById(R.id.showGameList_btn);
             button.setEnabled(true);
-            added = true;
+            added = true; //Stops the feed from being downloaded more than once after starting
             Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
         }
     }
 
+    //Play the given sound if it has loaded
     public static void playSound(int soundID)
     {
         if(soundLoaded.get(soundID))
@@ -305,6 +327,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         }
     }
 
+    //Starts the activity to view the list of new game releases
     public void showGameList(View view)
     {
         Intent intent = new Intent(this, ShowNewGameReleasesActivity.class);
@@ -312,6 +335,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         startActivity(intent);
     }
 
+    //Starts the activity to view the "about" text for the app
     public void viewAboutText(View view)
     {
         Intent intent = new Intent(this, AboutActivity.class);
@@ -319,6 +343,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         startActivity(intent);
     }
 
+    //Starts the activity to view the list of purchased games
     public void viewBoughtList(View view)
     {
         Intent intent = new Intent(this, ViewBoughtGameListActivity.class);
@@ -354,8 +379,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     }
 
     @Override
-    protected void onActivityResult(int requestCode,
-                                    int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == REQUEST_PLACE_PICKER
                 && resultCode == Activity.RESULT_OK) {

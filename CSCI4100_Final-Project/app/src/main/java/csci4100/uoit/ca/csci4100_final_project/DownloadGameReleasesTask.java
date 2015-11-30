@@ -16,6 +16,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+//Async task that parses a given feed and extracts a list of upcoming games
 public class DownloadGameReleasesTask extends AsyncTask<String, Void, List<Game>>{
     private GameDataListener listener = null;
     private Exception exception = null;
@@ -28,6 +29,7 @@ public class DownloadGameReleasesTask extends AsyncTask<String, Void, List<Game>
     @Override
     protected List<Game> doInBackground(String... params)
     {
+        //List of games downloaded from the feed
         List<Game> gameData = new ArrayList<>();
         //Download list of new game releases in background
         try
@@ -38,9 +40,11 @@ public class DownloadGameReleasesTask extends AsyncTask<String, Void, List<Game>
             Document document = builder.parse(url.openStream());
 
             NodeList games = document.getElementsByTagName("item");
+            //Loops through every entry (game) in the feed
             for (int i = 0; i < games.getLength(); i++)
             {
                 Node gameNode = games.item(i);
+                //Parse each game in the NodeList
                 if(gameNode.getNodeType() == Node.ELEMENT_NODE)
                 {
                     Element gameElement = (Element)gameNode;
@@ -72,12 +76,12 @@ public class DownloadGameReleasesTask extends AsyncTask<String, Void, List<Game>
     @Override
     protected void onPostExecute(List<Game> result)
     {
-        //Show the news stories in the UI
         if(this.exception != null)
         {
             exception.printStackTrace();
         }
 
+        //Sends the list of games from the feed to add to the database
         this.listener.setGames(result);
     }
 }

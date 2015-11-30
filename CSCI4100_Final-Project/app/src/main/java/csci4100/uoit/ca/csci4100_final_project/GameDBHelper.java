@@ -12,18 +12,19 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+//Helper class for performing operations on an SQLite database
 public class GameDBHelper extends SQLiteOpenHelper
 {
     public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_FILENAME = "upcoming_games.db";
     public static final String TABLE_NAME = "Games";
-
-    public static final String CREATE_STMT = "CREATE TABLE " + TABLE_NAME + "(" +
-            " title text primary key, releaseDate text not null," +
-            " description text, link text not null, whenWillBuy text not null)";
-    public static final String DROP_STMT = "DROP TABLE IF EXISTS " + TABLE_NAME;
-    private String[] columns = new String[] { "title", "releaseDate", "description", "link",
+    public static String[] columns = new String[] { "title", "releaseDate", "description", "link",
             "whenWillBuy" };
+
+    public static final String CREATE_STMT = "CREATE TABLE " + TABLE_NAME + "( " + columns[0] +
+            " text primary key, " + columns[1] + " text not null, " + columns[2] + " text, " +
+            columns[3] + " text not null, " + columns[4] + " text not null)";
+    public static final String DROP_STMT = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
     private Context context;
 
@@ -66,6 +67,7 @@ public class GameDBHelper extends SQLiteOpenHelper
 
     public boolean gameExists(String title)
     {
+        //Stores whether the game with the given title exists in the database
         boolean found = false;
 
         // obtain a database connection
@@ -77,8 +79,10 @@ public class GameDBHelper extends SQLiteOpenHelper
         String whereClause = columns[0] + " = ?";
         String[] whereArgs = new String[]{ title };
         Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", "");
+        //If an item is returned from the query...
         if (cursor.getCount() >= 1)
         {
+            //...queried game is already in the database
             found = true;
         }
         cursor.close();
@@ -97,7 +101,7 @@ public class GameDBHelper extends SQLiteOpenHelper
 
         String whereClause = columns[4] + " = ?";
         String[] whereArgs = new String[]{ context.getString(R.string.bought) };
-        String orderBy = columns[0] + " DESC";
+        String orderBy = columns[0] + " ASC";
         Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", orderBy);
         cursor.moveToFirst();
         //Continue adding games to the list while more are found
@@ -128,7 +132,9 @@ public class GameDBHelper extends SQLiteOpenHelper
         SQLiteDatabase database = this.getReadableDatabase();
 
         String whereClause = columns[4] + " = ?";
+        //Gets the array of "whenWillBuy" values
         String[] whenWillBuy_values = context.getResources().getStringArray(R.array.options);
+        //whereArg1 = "Will Never Buy It"
         String whereArg1 = whenWillBuy_values[whenWillBuy_values.length - 1];
         String[] whereArgs = new String[]{ whereArg1 };
         Cursor cursor = database.query(TABLE_NAME, columns, whereClause, whereArgs, "", "", "");
@@ -152,7 +158,11 @@ public class GameDBHelper extends SQLiteOpenHelper
         return games;
     }
 
-    //Query all games that may have expired in the database
+    /*
+    Query all games that may have expired in the database
+    This includes any games that you have not shown clear
+    interest in based on their "whenWillBuy" values
+    */
     public List<Game> getAllPossiblyExpiredGames()
     {
         List<Game> games = new ArrayList<>();
@@ -162,8 +172,11 @@ public class GameDBHelper extends SQLiteOpenHelper
 
         String whereClause = columns[4] + " = ? OR " + columns[4] + " = ? OR " + columns[4] +
                 " = ? OR " + columns[4] + " = ? OR " + columns[4] + " = ?";
+        //Gets the array of "whenWillBuy" values
         String[] whenWillBuy_values = context.getResources().getStringArray(R.array.options);
-        String whereArg1 = whenWillBuy_values[0];
+        String whereArg1 = whenWillBuy_values[0]; // = "Unsure"
+        //whereArg2 = "Not Planning to Buy It", whereArg3 = "Probably Not Buying It",
+        //whereArg4 = "Will Borrow/Rent It"
         String whereArg2 = whenWillBuy_values[whenWillBuy_values.length - 2];
         String whereArg3 = whenWillBuy_values[whenWillBuy_values.length - 3];
         String whereArg4 = whenWillBuy_values[whenWillBuy_values.length - 4];
@@ -197,8 +210,11 @@ public class GameDBHelper extends SQLiteOpenHelper
         //Get a connection to the database
         SQLiteDatabase database = this.getReadableDatabase();
 
+        //Specifies to return all games that are not bought or removed
         String whereClause = columns[4] + " != ? AND " + columns[4] + " != ?";
+        //Gets the array of "whenWillBuy" values
         String[] whenWillBuy_values = context.getResources().getStringArray(R.array.options);
+        //whereArg1 = "Will Never Buy It"
         String whereArg1 = whenWillBuy_values[whenWillBuy_values.length - 1];
         String[] whereArgs = new String[]{ whereArg1, context.getString(R.string.bought) };
         String orderBy = columns[0] + " ASC";

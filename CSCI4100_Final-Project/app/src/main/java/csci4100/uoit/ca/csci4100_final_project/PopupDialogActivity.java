@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.TextView;
 
+//Activity that represents a confirmation dialog
 public class PopupDialogActivity extends Activity
 {
     @Override
@@ -15,6 +16,7 @@ public class PopupDialogActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_popup_dialog);
 
+        //Sets the relevant dialog text based on the extras passed to it
         TextView textView = (TextView) findViewById(R.id.confirm_tView);
         boolean bought_checked = getIntent().getBooleanExtra("already_bought", false);
         if(bought_checked)
@@ -26,6 +28,7 @@ public class PopupDialogActivity extends Activity
     public void yesClick(View view)
     {
         MainMenuActivity.playSound(MainMenuActivity.confirmSound_ID);
+        //Tells the activity that started it that the user chose to confirm
         setResult(RESULT_OK);
         finish();
     }
@@ -33,6 +36,7 @@ public class PopupDialogActivity extends Activity
     public void noClick(View view)
     {
         MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
+        //Tells the activity that started it that the user chose to cancel
         setResult(RESULT_CANCELED);
         finish();
     }
