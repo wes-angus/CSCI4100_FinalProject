@@ -22,6 +22,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
         dbHelper = new GameDBHelper(context);
     }
 
+    //@SuppressWarnings("unchecked")
     @Override
     protected List<Game> doInBackground(Object... params)
     {
@@ -48,8 +49,7 @@ public class LoadDatabaseInfoTask extends AsyncTask<Object, Void, List<Game>>
                 games = (List<Game>) params[1];
             }
         }
-        //If you are updating a game, 2nd argument is a single Game object
-        else if(option == 2)
+        else if(option == 2 && params[1] instanceof Game)
         {
             if(params[1] != null)
             {
