@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
@@ -34,6 +33,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     private Parcelable listView_state = null;
     int scrollPos = 0;
     int gamePositionToModify = 0;
+    public static final String parseDatePattern = "EEE, d MMM yyyy";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -191,7 +191,7 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         for (Game game : possiblyExpiredGames)
         {
             Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy", Locale.US);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(parseDatePattern, Locale.US);
             Date curDate = calendar.getTime();
             try
             {
@@ -259,22 +259,66 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
     {
         EditText editText = (EditText) activity.findViewById(textFieldID);
         String searchText = editText.getText().toString().toLowerCase();
-        boolean found = false;
+        String[] searchTerms = searchText.split(" ");
+        boolean[] foundTerms = new boolean[searchTerms.length];
+        int found_pos = 0;
+        boolean found = true;
+        for (int i = 0; i < foundTerms.length; i++)
+        {
+            foundTerms[i] = false;
+        }
 
+        gameLoop:
         for (int i = 0; i < games.size(); i++)
         {
-            String title = games.get(i).getTitle().toLowerCase();
-            if(title.contains(searchText))
+            //Initialize values for the current game
+            found = true;
+            for (int index = 0; index < foundTerms.length; index++)
             {
-                editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
-                listView.setSelection(i);
-                found = true;
-                MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
-                break;
+                foundTerms[index] = false;
+            }
+            String title = games.get(i).getTitle().toLowerCase();
+            for (int j = 0; j < searchTerms.length; j++)
+            {
+                //Check if the individual search term is contained in the ti
+                if(title.contains(searchTerms[j]))
+                {
+                    foundTerms[j] = true;
+                    if(j == searchTerms.length - 1)
+                    {
+                        for (boolean foundTerm : foundTerms)
+                        {
+                            if(!foundTerm)
+                            {
+                                //If one of the search terms doesn't
+                                //match, then the item wasn't found
+                                found = false;
+                                break;
+                            }
+                        }
+                        //If all search terms match...
+                        if(found)
+                        {
+                            //...exit the game loop and set the position to move the ListView to
+                             found_pos = i;
+                            break gameLoop;
+                        }
+                    }
+                }
+                if(i == games.size() - 1 && j == searchTerms.length - 1)
+                {
+                    found = false;
+                }
             }
         }
 
-        if(!found)
+        if(found)
+        {
+            editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
+            MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
+            listView.setSelection(found_pos);
+        }
+        else
         {
             MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
             editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);

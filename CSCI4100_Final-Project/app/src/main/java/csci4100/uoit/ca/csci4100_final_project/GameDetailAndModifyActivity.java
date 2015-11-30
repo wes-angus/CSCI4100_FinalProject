@@ -2,16 +2,21 @@
 
 package csci4100.uoit.ca.csci4100_final_project;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.provider.CalendarContract;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class GameDetailAndModifyActivity extends Activity
 {
@@ -152,6 +157,26 @@ public class GameDetailAndModifyActivity extends Activity
                 setResult(RESULT_OK, intent);
                 finish();
             }
+        }
+    }
+
+    public void createCalendarEvent(View view)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                ShowNewGameReleasesActivity.parseDatePattern, Locale.US);
+        try
+        {
+            Date date = dateFormat.parse(game.getReleaseDate());
+            Intent intent = new Intent(Intent.ACTION_INSERT)
+                    .setData(CalendarContract.Events.CONTENT_URI)
+                    .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date.getTime())
+                    .putExtra(CalendarContract.Events.TITLE, "Release of " + game.getTitle());
+            startActivity(intent);
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
         }
     }
 }
