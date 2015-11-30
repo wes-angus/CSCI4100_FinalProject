@@ -40,7 +40,7 @@
             android:theme="@android:style/Theme.Holo.Dialog" />
         <activity
             android:name=".ViewBoughtGameListActivity"
-            android:label="@string/title_activity_view_bought_game_list"></activity>
+            android:label="@string/title_activity_view_bought_game_list" />
     </application>
 
 </manifest>

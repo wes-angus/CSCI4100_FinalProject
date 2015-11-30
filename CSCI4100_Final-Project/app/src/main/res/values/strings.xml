@@ -70,4 +70,7 @@
     <string name="bought_btn_txt">View Bought Game List</string>
     <string name="title_activity_view_bought_game_list">ViewBoughtGameList</string>
     <string name="bought_item_click_instructions">Click for more information.</string>
+    <string name="search_hint">Find New Game Releases by Title</string>
+    <string name="search">Search</string>
+    <string name="bought_search_hint">Find Bought Games by Title</string>
 </resources>

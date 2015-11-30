@@ -2,11 +2,15 @@
 
 package csci4100.uoit.ca.csci4100_final_project;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.List;
 public class ViewBoughtGameListActivity extends Activity implements DatabaseListener
 {
     ListView listView;
+    List<Game> games;
     private Parcelable listView_state = null;
     public static final String B_L_VIEW_STATE = "bought_listView_prevState";
 
@@ -24,6 +29,9 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
         setContentView(R.layout.activity_view_bought_game_list);
 
         listView = (ListView) findViewById(R.id.boughtGames_listView);
+
+        EditText editText = (EditText) findViewById(R.id.bought_searchField);
+        editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
 
         //Gets the list of bought games from the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
@@ -77,6 +85,8 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
     {
         if(!games.isEmpty())
         {
+            this.games = games;
+
             listView = (ListView) findViewById(R.id.boughtGames_listView);
             populateList(listView, games);
 
@@ -95,5 +105,10 @@ public class ViewBoughtGameListActivity extends Activity implements DatabaseList
                 listView.onRestoreInstanceState(listView_state);
             }
         }
+    }
+
+    public void search(View view)
+    {
+        ShowNewGameReleasesActivity.searchGameList(games, this, listView, R.id.bought_searchField);
     }
 }

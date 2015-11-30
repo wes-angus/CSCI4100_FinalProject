@@ -4,12 +4,16 @@ package csci4100.uoit.ca.csci4100_final_project;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -38,6 +42,9 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
         setContentView(R.layout.activity_show_new_game_releases);
 
         listView = (ListView) findViewById(R.id.game_listView);
+
+        EditText editText = (EditText) findViewById(R.id.searchField);
+        editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
 
         //Gets the list of games from the database
         LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
@@ -245,5 +252,37 @@ public class ShowNewGameReleasesActivity extends Activity implements DatabaseLis
                 }
             }
         }
+    }
+
+    public static void searchGameList(List<Game> games, Activity activity, ListView listView,
+                                      int textFieldID)
+    {
+        EditText editText = (EditText) activity.findViewById(textFieldID);
+        String searchText = editText.getText().toString().toLowerCase();
+        boolean found = false;
+
+        for (int i = 0; i < games.size(); i++)
+        {
+            String title = games.get(i).getTitle().toLowerCase();
+            if(title.contains(searchText))
+            {
+                editText.getBackground().setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
+                listView.setSelection(i);
+                found = true;
+                MainMenuActivity.playSound(MainMenuActivity.buttonSound2_ID);
+                break;
+            }
+        }
+
+        if(!found)
+        {
+            MainMenuActivity.playSound(MainMenuActivity.cancelSound_ID);
+            editText.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+        }
+    }
+
+    public void search(View view)
+    {
+        searchGameList(games, this, listView, R.id.searchField);
     }
 }
