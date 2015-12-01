@@ -39,13 +39,13 @@ import java.util.Set;
 
 /*
 TODO: Maybe improve search more
-TODO: Add more comments
 TODO: Maybe add broadcast receiver for headphones being plugged/unplugged
 TODO: Add button to clear all data from the database
 */
 //Main menu activity from which the other activities are accessed
 public class MainMenuActivity extends Activity implements GameDataListener, DatabaseListener, GoogleApiClient.ConnectionCallbacks {
     private static final String prefs_filename = "loadOnce";
+    public static final int RESET_DIALOG = 17;
     private String url = "";
     private static SoundPool soundPool = null;
     public static int buttonSound1_ID = -1;
@@ -318,6 +318,18 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             added = true; //Stops the feed from being downloaded more than once after starting
             Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
         }
+        //Returns after all of the games are deleted from the database
+        else if(option == LoadDatabaseInfoTask.SYNC_ENUM.DELETE_ALL_GAMES)
+        {
+            //Lets the program know that the download is not completed
+            added = false;
+            //Disables the button to stop you from viewing the list while it fills it with new data
+            Button button = (Button) findViewById(R.id.showGameList_btn);
+            button.setEnabled(false);
+            //Parses the new game releases feed in an AsyncTask
+            DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
+            task.execute(url);
+        }
     }
 
     //Play the given sound if it has loaded
@@ -410,7 +422,18 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
                 super.onActivityResult(requestCode, resultCode, data);
                 Log.d("PlacePicker", "Failed pick");
             }
-        } else {
+        }
+        else if(requestCode == RESET_DIALOG)
+        {
+            if(resultCode == Activity.RESULT_OK)
+            {
+                //Get the list of removed games from the database
+                LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
+                task.execute(LoadDatabaseInfoTask.SYNC_ENUM.DELETE_ALL_GAMES);
+            }
+        }
+        else
+        {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -435,5 +458,11 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
     @Override
     public void onConnectionSuspended(int i) {
         (findViewById(R.id.findStores_btn)).setEnabled(false);
+    }
+    public void deleteAllConfirm(View view)
+    {
+        Intent intent = new Intent(this, PopupDialogActivity.class);
+        intent.putExtra("want_to_reset", true);
+        startActivityForResult(intent, RESET_DIALOG);
     }
 }

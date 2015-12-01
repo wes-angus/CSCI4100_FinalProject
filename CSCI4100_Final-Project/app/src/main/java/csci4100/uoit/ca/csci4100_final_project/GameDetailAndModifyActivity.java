@@ -208,6 +208,7 @@ public class GameDetailAndModifyActivity extends Activity
                     .putExtra(CalendarContract.Events.DESCRIPTION, game.getDescription())
                     .putExtra(CalendarContract.Events.EVENT_COLOR, Color.RED)
                     .putExtra(CalendarContract.Events.TITLE, "Release of " + game.getTitle());
+            MainMenuActivity.playSound(MainMenuActivity.buttonSound1_ID);
             startActivity(intent);
         }
         catch (ParseException e)
