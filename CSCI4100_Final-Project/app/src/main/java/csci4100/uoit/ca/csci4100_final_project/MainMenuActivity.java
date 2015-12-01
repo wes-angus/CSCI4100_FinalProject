@@ -297,8 +297,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             }
             if(gamesToRemove.isEmpty())
             {
-                Button button = (Button) findViewById(R.id.showGameList_btn);
-                button.setEnabled(true);
+                setEnableShowGames(true);
                 added = true;
                 Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
             }
@@ -313,8 +312,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         else if(option == LoadDatabaseInfoTask.SYNC_ENUM.DELETE_GAMES)
         {
             //Enables the button to let you view the list
-            Button button = (Button) findViewById(R.id.showGameList_btn);
-            button.setEnabled(true);
+            setEnableShowGames(true);
             added = true; //Stops the feed from being downloaded more than once after starting
             Toast.makeText(this, R.string.games_added, Toast.LENGTH_SHORT).show();
         }
@@ -425,8 +423,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
             if(resultCode == Activity.RESULT_OK)
             {
                 //Disables the button to stop you from viewing the list while it fills it with new data
-                Button button = (Button) findViewById(R.id.showGameList_btn);
-                button.setEnabled(false);
+                setEnableShowGames(false);
                 //Get the list of removed games from the database
                 LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
                 task.execute(LoadDatabaseInfoTask.SYNC_ENUM.DELETE_ALL_GAMES);
@@ -464,5 +461,11 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         Intent intent = new Intent(this, PopupDialogActivity.class);
         intent.putExtra("want_to_reset", true);
         startActivityForResult(intent, RESET_DIALOG);
+    }
+
+    private void setEnableShowGames(boolean enabled) {
+        (findViewById(R.id.showGameList_btn)).setEnabled(enabled);
+        ((SpriteView)findViewById(R.id.sprite_android)).setRunning(enabled);
+        ((SpriteView)findViewById(R.id.sprite_android2)).setRunning(enabled);
     }
 }

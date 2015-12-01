@@ -12,15 +12,29 @@
     tools:context=".MainMenuActivity">
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/aboutBtn"
-        android:layout_above="@+id/boughtBtn">
+        android:layout_width="36dp"
+        android:layout_height="47dp"
+        android:layout_alignTop="@+id/showGameList_btn"
+        android:layout_toStartOf="@+id/showGameList_btn">
 
         <csci4100.uoit.ca.csci4100_final_project.SpriteView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="36dp"
+            android:layout_height="32dp"
+            android:id="@+id/sprite_android"
+            android:layout_gravity="left|center_vertical" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="36dp"
+        android:layout_height="47dp"
+        android:layout_alignTop="@+id/showGameList_btn"
+        android:layout_toRightOf="@+id/showGameList_btn">
+
+        <csci4100.uoit.ca.csci4100_final_project.SpriteView
+            android:layout_width="32dp"
+            android:layout_height="33dp"
+            android:id="@+id/sprite_android2"
+            android:layout_gravity="right|center_vertical" />
     </FrameLayout>
 
     <Button
@@ -69,5 +83,7 @@
         android:onClick="deleteAllConfirm"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
+
 
 </RelativeLayout>

@@ -1,3 +1,4 @@
+// Authors: Montgomery Alban
 package csci4100.uoit.ca.csci4100_final_project;
 
 import android.content.Context;
@@ -12,12 +13,17 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * TODO: document your custom view class.
+ * Sprite class based on the Graphics2DWithAndroid sample
  */
 public class SpriteView extends View {
 
     private Handler handler;
     final int REFRESH_DELAY = 300;
+    boolean running = false;
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
 
     private Runnable animationThread = new Runnable() {
         @Override
@@ -117,6 +123,7 @@ public class SpriteView extends View {
 
         sprite.draw(canvas);
         handler.postDelayed(animationThread, REFRESH_DELAY);
-        sprite.nextFrame();
+        if(running)
+            sprite.nextFrame();
     }
 }
