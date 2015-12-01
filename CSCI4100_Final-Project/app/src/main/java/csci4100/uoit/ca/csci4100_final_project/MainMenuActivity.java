@@ -190,7 +190,7 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
 
         //Restore the state of adding games to the database so the feed is not
         //downloaded every time the user navigates back to the main menu
-        savedInstanceState.getBoolean("added", false);
+        added = savedInstanceState.getBoolean("added", false);
     }
 
     @Override
@@ -323,9 +323,6 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         {
             //Lets the program know that the download is not completed
             added = false;
-            //Disables the button to stop you from viewing the list while it fills it with new data
-            Button button = (Button) findViewById(R.id.showGameList_btn);
-            button.setEnabled(false);
             //Parses the new game releases feed in an AsyncTask
             DownloadGameReleasesTask task = new DownloadGameReleasesTask(this);
             task.execute(url);
@@ -427,6 +424,9 @@ public class MainMenuActivity extends Activity implements GameDataListener, Data
         {
             if(resultCode == Activity.RESULT_OK)
             {
+                //Disables the button to stop you from viewing the list while it fills it with new data
+                Button button = (Button) findViewById(R.id.showGameList_btn);
+                button.setEnabled(false);
                 //Get the list of removed games from the database
                 LoadDatabaseInfoTask task = new LoadDatabaseInfoTask(this, getApplicationContext());
                 task.execute(LoadDatabaseInfoTask.SYNC_ENUM.DELETE_ALL_GAMES);
